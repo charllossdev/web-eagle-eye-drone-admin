@@ -25,4 +25,5 @@ hs_err_pid*
 
 # Ignore Folder Path
 
-webapp/common/eagleeye-admin/
+common/
+
