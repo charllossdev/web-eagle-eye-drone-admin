@@ -1,0 +1,57 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<tiles:insertAttribute name="head"/>
+	</head>
+	
+	<body class="skin-default-dark fixed-layout lock-nav">
+	
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader__figure"></div>
+            <p class="loader__label">EagleEye Admin</p>
+        </div>
+    </div>
+    
+	<!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper">
+    
+    	<tiles:insertAttribute name="header"/>
+    	
+    	<tiles:insertAttribute name="leftMenu"/>
+    	<!-- ============================================================== -->
+    	<!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+
+    			<tiles:insertAttribute name="tab"/>
+    			<tiles:insertAttribute name="content"/>
+    			<tiles:insertAttribute name="rightMenu"/>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    	
+    	<tiles:insertAttribute name="footer"/>
+    
+    </div>
+    
+    <tiles:insertAttribute name="script"/>
+	</body>
+</html>

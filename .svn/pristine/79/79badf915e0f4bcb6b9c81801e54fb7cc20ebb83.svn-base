@@ -1,0 +1,287 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ include file="/WEB-INF/jsp/egovframework/example/cmmn/common_lib.jsp" %>
+
+<style>
+
+.tab-btn-container {
+    top: 13px;
+    width: 17px;
+    height: 17px;
+    background: url(/common/images/templet/icon_sprite.png) no-repeat;
+    background-position: -22px -148px;
+
+    right: 10px;
+    z-index: 1;
+    border: 0px;
+    cursor: pointer;
+    outline: none;		
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+</style>
+<script>
+
+	var tabFn = {
+		
+		tabArr 				: ["DashBoard"],
+		tabFlag				: "",
+		
+		tabCheckYn			: function($aTag) {
+			var that = this;
+			
+			if ($.inArray($aTag.data("code"), that.tabArr) > -1 ) {
+				
+				that.tabToggle($aTag.data("code"));
+				
+			} else {
+				
+				if (that.tabArr.length >= 8) {
+					
+					alert("탭은 최대 8개까지 생성할 수 있습니다.");
+					
+				} else {
+					
+					that.tabAdd($aTag);
+					
+				}
+			}
+		},
+		
+		tabAdd				: function($aTag) {
+			
+			// 2018-12-24 DOM 생성
+			var tabLi 		= document.createElement("li");
+			var tabA		= document.createElement("a");
+			var tabSpan1	= document.createElement("span");
+			var tabSpan2	= document.createElement("span");
+			var tabI		= document.createElement("i");
+			var tabBtn		= document.createElement("button");
+			var tabDiv		= document.createElement("div");
+			var tabDiv1		= document.createElement("div");
+			var tabDiv2		= document.createElement("div");
+			var tabDiv3		= document.createElement("div");
+			var tabDiv4		= document.createElement("div");
+			var tabDiv5		= document.createElement("div");
+			var tabH4		= document.createElement("h4");
+			var tabOl		= document.createElement("ol");
+			var tabLi1		= document.createElement("li");
+			var tabLi2		= document.createElement("li");
+			var tabLi3		= document.createElement("li");
+			var tabA1		= document.createElement("a");
+			var tabExitBtn  = document.createElement("button");
+			
+			tabLi.setAttribute("class", "nav-item");
+			tabLi.setAttribute("data-tab", $aTag.data("code"));
+			
+			tabA.setAttribute("class", "nav-link active show tab-a-link");
+			tabA.setAttribute("data-toggle", "tab");
+			tabA.setAttribute("href", "#"+ $aTag.data("code"));
+			tabA.setAttribute("role", "tab")
+			tabA.setAttribute("aria-selected", true);
+
+			
+			tabSpan1.setAttribute("class", "hidden-sm-up");
+			tabSpan2.setAttribute("class", "hidden-xs-down");
+			tabSpan2.textContent = $aTag.data("code") + " ";
+			
+			tabI.setAttribute("class", "ti-home");
+
+			tabBtn.setAttribute("type", "button");
+			tabBtn.setAttribute("class", "tab-btn-container");
+			
+			tabSpan1.appendChild(tabI);
+			tabA.appendChild(tabSpan1);
+			tabA.appendChild(tabSpan2);
+			tabA.appendChild(tabBtn);
+			tabLi.appendChild(tabA);
+
+			this.tabArr.push($aTag.data("code"));
+			
+			tabDiv1.setAttribute("class", "tab-pane");
+			tabDiv1.setAttribute("id", $aTag.data("code"));
+			tabDiv1.setAttribute("role", "tabpanel");
+			
+			
+			tabDiv2.setAttribute("class", "row page-titles");
+			tabDiv3.setAttribute("class", "col-md-5 align-self-center");
+			tabDiv4.setAttribute("class", "col-md-7 align-self-center text-right");
+			
+			tabH4.setAttribute("class", "text-themecolor");
+			tabH4.textContent = $aTag.text() + "";
+			
+			tabOl.setAttribute("class", "breadcrumb");
+			
+			tabLi1.setAttribute("class", "breadcrumb-item");
+			tabLi2.setAttribute("class", "breadcrumb-item active");
+			tabLi2.textContent = $aTag.data("code");
+			
+			tabA1.setAttribute("href", "/");
+			tabA1.textContent = "Home";
+			//<button type="button" class="btn waves-effect waves-light btn-danger d-none d-lg-block m-l-15">
+			//<i class="fa fa-times-circle">
+			//</i> Close Tab </button>
+			tabLi3.setAttribute("class", "fa fa-times-circle");
+            tabExitBtn.setAttribute("class", "btn waves-effect waves-light btn-danger d-none d-lg-block m-l-15");
+            tabExitBtn.textContent = " Close Tab ";
+            tabExitBtn.appendChild(tabLi3);
+            
+			tabLi1.appendChild(tabA1);
+			tabOl.appendChild(tabLi1);
+			tabOl.appendChild(tabLi2);
+			tabDiv5.appendChild(tabOl);
+			tabDiv5.appendChild(tabExitBtn);
+			tabDiv4.appendChild(tabDiv5);
+			tabDiv3.appendChild(tabH4);			
+			tabDiv2.appendChild(tabDiv3);
+			tabDiv2.appendChild(tabDiv4);
+			tabDiv1.appendChild(tabDiv2);
+			
+			tabDiv5.setAttribute("class", "d-flex justify-content-end align-items-center");
+			
+			console.log(tabDiv1);
+			
+			tabDiv.setAttribute("id", $aTag.data("code") + "-Content");
+			
+			$("#tabCon").append(tabDiv);
+			
+			document.getElementById("tabList").appendChild(tabLi);
+			document.getElementById("tab-content").appendChild(tabDiv1);
+			
+			contentFn.pageLoad($aTag);
+			
+			this.tabToggle($aTag.data("code"));
+			
+		}, 
+		
+		tabToggle			: function(code) {
+			
+			console.log(code);
+
+			var $dataTab 	= $("[data-tab=" + code +"]");
+			var $dataCode	= $("[data-code=" + code + "]");
+			
+			$("#tabList > li").children().removeClass("active show");
+			$("#tabList > li").find("a").attr("aria-selected", false); 
+			$("#tabList > li").find(".tab-btn-container").hide();
+			
+			$("#tabCon > div").hide();
+			$("#tabConent > div").hide();
+			$("#tab-content > div").hide();
+			
+			$dataTab.find("a").addClass("active show");
+			$dataTab.find("a").attr("aria-selected", true);
+			$dataTab.find(".tab-btn-container").show();
+			
+			$("#" + code).show();
+			$("#" + code + "-Content").show();	
+		},
+		
+		tabEvent			: function() {
+			
+			var that = this;
+			
+			$("#tabList").on("click", ".tab-a-link", function() {
+				
+				if (that.tabFlag === "REMOVE") {
+					that.tabFlag = "";
+				} else {
+					
+					var code = $(this).parent().data("tab");
+
+					console.log(code);
+					
+					that.tabToggle(code);
+					
+					sideMenuFn.active($("[data-code=" + code + "]"));
+				} 
+				
+			});
+			
+			$("#tabList").on("click", ".tab-btn-container", that.tabRemove);
+				
+		},
+		
+		tabRemove			: function() {
+			
+			tabFn.tabFlag   = "REMOVE";
+			var $this		= $(this);
+			var code		= $this.closest("li").data("tab");
+			var index		= tabFn.tabArr.indexOf(code);
+			var nextIndex;
+			
+			tabFn.tabArr.splice(index, 1);
+			
+			$(this).closest("li").remove();
+			
+			$("#" + code).remove();
+			$("#" + code + "-Content").remove();
+			
+			if (index === tabFn.tabArr.length) {
+				nextIndex = index - 1;
+			} else {
+				nextIndex = index;
+			}
+			
+			tabFn.tabToggle(tabFn.tabArr[nextIndex]);
+		}
+	}
+	
+	$(function() {
+		tabFn.tabEvent();
+		
+		/*
+		console.log("Browser CodeName: " + navigator.appCodeName);
+		console.log(" ");
+		console.log("Browser Name: " + navigator.appName);
+		console.log(" ");
+		console.log("Browser Version: " + navigator.appVersion);
+		console.log(" ");
+		console.log(" ");
+		console.log("Platform: " + navigator.platform);
+		console.log(" ");
+		console.log("User-agent header: " + navigator.userAgent);
+		*/
+
+	})
+
+
+
+</script>
+<!-- ============================================================== -->
+<!-- Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+<br>
+                
+	<div class="card">
+    	<div class="card-body p-b-0">
+        <!-- Nav tabs -->
+	        <ul id="tabList" class="nav nav-tabs customtab2" role="tablist">
+	            <li class="nav-item" data-tab="DashBoard"> <a class="nav-link active show tab-a-link" data-toggle="tab" href="#DashBoard" role="tab" aria-selected="true"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">DashBoard</span></a> </li>
+	        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content" id="tab-content">
+            <div class="tab-pane active show" id="DashBoard" role="tabpanel">
+                <div class="row page-titles">
+                    <div class="col-md-5 align-self-center">
+                        <h4 class="text-themecolor">Eagle Eye Main Dashboard</h4>
+                    </div>
+                    <div class="col-md-7 align-self-center text-right">
+                        <div class="d-flex justify-content-end align-items-center">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                                <li class="breadcrumb-item active">Dashboard</li>
+                            </ol>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================== -->
+<!-- End Bread crumb and right sidebar toggle -->
+<!-- ============================================================== -->
+
+	

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.products.service.impl.ProductsMapper">
+	
+	<select id="selectProductsList" resultType="egovMap">
+		SELECT g.GD_CD
+		     , g.GD_NM
+		     , g.GD_ENG_NM
+		     , g.L_CAT_CD
+		     , g.M_CAT_CD
+		     , i.GD_IMG_PATH
+		     , i.GD_IMG_FILE_NM
+		  FROM T_GD g inner join T_GD_IMG i
+		    ON g.GD_CD = i.GD_CD
+		   AND i.BSC_IMG_YN = 'Y';
+
+	</select>
+	<!-- 쇼핑몰 카테고리 조회 -->
+	<select id="selectShopCatList" resultType="egovMap">
+			WITH RECURSIVE TC (CAT_CD, CAT_NM, CAT_ENG_NM, UPPR_CAT_CD, SORT_SEQ, CAT_LV, SORT_ORD, USE_YN) AS
+		           (
+		              SELECT CAT_CD
+		                   , CAT_NM
+		                   , CAT_ENG_NM
+		                   , UPPR_CAT_CD
+		                   , SORT_SEQ
+		                   , CAT_LV
+		                   , FN_GET_GD_CAT_SORT_SQL(CAT_CD, CAT_LV) AS SORT_ORD
+		                   , USE_YN
+		                FROM T_GD_CAT
+		               WHERE UPPR_CAT_CD IS NULL
+		               UNION ALL
+		              SELECT C.CAT_CD
+		                   , C.CAT_NM
+		                   , C.CAT_ENG_NM
+		                   , C.UPPR_CAT_CD
+		                   , C.SORT_SEQ
+		                   , C.CAT_LV
+		                   , FN_GET_GD_CAT_SORT_SQL(C.CAT_CD, C.CAT_LV) AS SORT_ORD
+		                   , C.USE_YN
+		                FROM T_GD_CAT C
+		               INNER JOIN TC ON C.UPPR_CAT_CD = TC.CAT_CD
+		           )
+		           SELECT TC.CAT_CD
+		                , TC.CAT_NM
+		                , TC.CAT_ENG_NM
+		                , IFNULL(TC.UPPR_CAT_CD, 'C000000000') AS UPPR_CAT_CD
+		                , TC.SORT_SEQ
+		                , TC.CAT_LV
+		                , TC.SORT_ORD
+		                , TC.USE_YN
+		             FROM TC
+		            ORDER BY TC.SORT_ORD
+
+	</select>
+		<insert id="insertPrdCat" parameterType="map">
+		<selectKey order="BEFORE" keyProperty="sortSeq" resultType="Integer">
+			SELECT IFNULL(MAX(SORT_SEQ), 0) + 1
+				FROM T_GD_CAT
+				WHERE
+				<choose>
+					<when test="catLv == '1' or upprCatCd == 'C000000000'">
+						UPPR_CAT_CD IS NULL
+					</when>
+					<otherwise>
+						UPPR_CAT_CD = #{upprCatCd}
+					</otherwise>
+				</choose>
+		</selectKey>
+		INSERT INTO T_GD_CAT (
+				CAT_CD/* 카테고리 코드 */
+				, CAT_NM/* 카테고리 명 */
+				, CAT_ENG_NM/*카테고리 영문 명*/
+				<if test="catLv != '1' and upprCatCd != 'C000000000'">
+				, UPPR_CAT_CD/* 카테고리 부모코드 */
+				</if>
+				, CAT_LV/* 뎁스 */
+				, USE_YN/* 노출여부 */
+				, SORT_SEQ/* 순서 */
+				, REGR/* 생성자 */
+				, REG_DT/* 생성 일시 */
+				, UPDR/* 수정자 */
+				, UPD_DT/* 수정일시 */
+			) VALUES (
+				#{catCd}
+				, #{catNm}
+				, #{catEngNm}
+				<if test="catLv != '1' and upprCatCd != 'C000000000'">
+				, #{upprCatCd}
+				</if>
+				, #{catLv}
+				, #{useYn}
+				, #{sortSeq}
+				, 'SYSTEM'
+				, now()
+				, 'SYSTEM'
+				, now()
+			)
+	</insert>
+	<select id="selectLowerCatList" parameterType="map" resultType="egovMap">
+		 SELECT CAT_CD,
+				CAT_NM,
+				UPPR_CAT_CD,
+				SORT_SEQ,
+				CAT_LV
+			FROM T_GD_CAT
+			WHERE UPPR_CAT_CD = #{catCd}
+	</select>
+	<delete id="deleteCategory" parameterType="map">
+		DELETE
+			FROM T_GD_CAT
+			WHERE CAT_CD = #{catCd}
+	</delete>
+	<update id="updateCategory" parameterType="map">
+		UPDATE T_GD_CAT
+			SET CAT_NM	= #{catNm},
+				USE_YN	= #{useYn},
+				SORT_SEQ = #{sortSeq},
+				UPDR	= 'SYSTEM',
+				UPD_DT	= NOW()
+			WHERE CAT_CD = #{catCd}
+	</update>
+</mapper>

@@ -1,0 +1,182 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ include file="/WEB-INF/jsp/egovframework/example/cmmn/common_lib.jsp" %>
+
+<link rel="stylesheet" type="text/css" href="<c:url value='/common/css/jqgrid/ui.jqgrid.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<c:url value='/common/css/jqgrid/jquery-ui.css'/>" >
+
+<script type="text/javascript" src="<c:url value='/jqgrid/Guriddo_jqGrid_JS_5_3_2/js/trirand/i18n/grid.locale-kr.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/jqgrid/Guriddo_jqGrid_JS_5_3_2/js/trirand/src/jquery.jqGrid.js'/>"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+
+<script>
+
+	var dpBnnrDtlCls = {
+		$jqGridDtl			: $,
+		
+		jqGridDtlInit		: function() {
+			this.$jqGridDtl = $("#jqGridDtl");
+		},
+	
+		jqGridDtlInitFn	: function() {
+			var that = this;
+			this.$jqGridDtl.jqGrid({
+				url				: "<c:url value='/bnnrDtlList.do'/>",
+				colModel		: [
+					{label 		: "관리번호", 	name : "bnnrMngNo", 	width: 150, 		align: "center", hidden : true},
+					{label 		: "상세순번", 	name : "dtlSeq", 		width: 150, 		align: "center", hidden : true},
+					{label 		: "배너내용", 	name : "bnnrConts", 	width: 150, 		align: "right"},
+					{label 		: "배너이미지", name : "imgAttFile", 	width: 200, 		align: "left"},
+					{label 		: "URL", 		name : "bnnrUrl", 		width: 150, 		align: "center"},
+					{label 		: "노출순서", 	name : "sortSeq", 		width: 50, 			align: "center"}
+					// {label 		: "구분", 		name : "btn", 			width: 50, 			align: "center", formatter : gridActionCls.gubunBtn}
+				],
+				autowidth		: true,
+				cellEdit		: true,
+				cellsubmit		: "clientArray",
+				// multiselect		: true, // 체크박스
+				datatype		: "local",
+				onCellSelect	: function(rowId, colIndex, cellVal) {
+					
+				}		
+			});
+		}, 
+	    
+		goSearchFn 		: function(bnnrMngNo) {
+	          
+	          //setGridParam : ajax호출 , trigger : 갖고온 데이터를 그리드 안에서 새로고침, loadComplete는 ajax에서의 success
+	          $("#jqGridDtl").setGridParam({
+	             
+	             datatype      	: "json",
+	             mtype         	: "GET",
+	             postData		: {"bnnrMngNo" :  bnnrMngNo },
+	             
+	             loadComplete   : function(data) {
+	                console.log("data : ", data);
+	             }
+	          }).trigger("reloadGrid");
+	      },
+	}
+
+	var dpBnnrCls = {
+					
+		checkInitDtl	: 0,
+		$jqGrid			: $,
+		
+		jqGridInit		: function() {
+			this.$jqGrid = $("#jqGrid");
+		},
+		
+		jqGridInitFn	: function() {
+			var that 	= this;
+			
+			this.$jqGrid.jqGrid({
+				
+				url				: "<c:url value='dpBnnrListEvent.do'/>",
+				datatype		: "json",
+				
+				colModel		: [
+					{label 		: "번호",       name : "bnnrMngNo",         width : 60,     align : "center", hidden : true},
+					{label 		: "제목",       name : "subj",            	width : 260,   	align : "left"  },
+					{label 		: "전시기간",	name : "exposurePeriod",   	width : 260,   	align : "center"},
+					{label 		: "진행상태",   name : "status",         	width : 90,     align : "center"},
+					{label 		: "전시여부",   name : "dpYn",            	width : 90,     align : "center"},
+					{label 		: "등록자",     name : "regr",            	width : 90,     align : "center"},
+					{label 		: "등록일",  	name : "regDt",            	width : 90,     align : "center"}     	   
+				],
+				caption			: "배너관리",
+				autowidth		: true,
+				rownumbers		: true,
+				pager			: "#jqGridPager",
+				rowNum			: 5,
+				// rowList			: [10, 20, 30, 40, 50],
+				viewrecords		: true,
+				onCellSelect 	: function(rowId, colIndex, cellVal) {
+					
+					if (that.checkInitDtl === 0) {
+					   
+					   dpBnnrDtlCls.jqGridDtlInit();
+					   dpBnnrDtlCls.jqGridDtlInitFn();
+					   
+					   
+					   that.checkInitDtl++;
+					}
+					
+					var bnnrMngNo	= that.$jqGrid.getCell(rowId, "bnnrMngNo");
+					
+					if (bnnrMngNo > 0) {
+							
+						document.getElementById('focusOnMe').focus();
+						
+						dpBnnrDtlCls.goSearchFn(bnnrMngNo);
+						
+					}
+				}
+			});
+		},
+	    goSearchFn 		: function() {
+	          
+	          //setGridParam : ajax호출 , trigger : 갖고온 데이터를 그리드 안에서 새로고침, loadComplete는 ajax에서의 success
+	          $("#jqGrid").setGridParam({
+	             
+	             datatype      : "json",
+	             mtype         : "GET",
+	             
+	             loadComplete   : function(data) {
+	                console.log("data : ", data);
+	             }
+	          }).trigger("reloadGrid");
+	      },
+	       
+	       pageMoveFn : function() {
+	           // location.href = "<c:url value='/dpBnnrReg.do' />";
+	    	   tabFn.tabRemove();
+	       }
+	}
+	
+	$(function() {
+		   
+		   dpBnnrCls.jqGridInit();
+		   dpBnnrCls.jqGridInitFn();
+   
+	});
+
+</script>
+
+	<div class="row">
+	  <div class="col-12">
+	  	<div class="card">
+	          <div class="card-body">
+	              <h4 class="card-title">Editable with Datatable Event</h4>
+	              <table id="jqGridDtl"></table>
+	          </div>
+	          <div id="focusOnMe" ></div>
+	      </div>
+	      <!-- Column -->
+	      <div class="card">
+	          <div class="card-body">
+	              <h4 class="card-title">Event PopUp Setting</h4>
+	              <table id="jqGrid"></table>
+	              <div id="jqGridPager"></div>
+				  <div class="btn-wrap mgt-20">
+				     <div class="right txt-right">
+			    	 <div class="col-lg-6"></div>
+			    	 <div class="col-lg-6">
+			           <div class="col-lg-2 col-md-4">
+			           		<button type="button" class="btn waves-effect waves-light btn-block btn-secondary" onclick="dpBnnrCls.pageMoveFn()">수  정</button>
+				       		<button class="btn waves-effect waves-light btn-secondary d-none d-lg-block m-l-15"> Close Tab <li class="fa fas fa-cog"></li></button>
+				       </div>
+				      </div>
+				     </div> 
+				  </div>	              
+	          </div>
+	      </div>
+	      <!-- Column -->
+	      <!-- Column -->
+	      
+	    </div>
+	</div>
+	<!-- ============================================================== -->
+	<!-- End PAge Content -->
+	<!-- ============================================================== -->
+
+	    

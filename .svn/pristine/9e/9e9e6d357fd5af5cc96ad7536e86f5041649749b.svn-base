@@ -1,0 +1,30 @@
+package egovframework.example.event.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import egovframework.example.event.service.EventService;
+import egovframework.rte.psl.dataaccess.util.EgovMap;
+
+@Service
+public class EventServiceImpl implements EventService 
+{
+	@Resource
+	private EventMapper eventMapper;
+
+	@Override
+	public List<EgovMap> selectBnList(Map<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		return eventMapper.selectBnList(map);
+	}
+
+	@Override
+	public List<EgovMap> selectBnnrMngList(Map<String, Object> map) throws Exception {
+		// TODO Auto-generated method stub
+		return eventMapper.selectBnnrMngList(map);
+	}
+}

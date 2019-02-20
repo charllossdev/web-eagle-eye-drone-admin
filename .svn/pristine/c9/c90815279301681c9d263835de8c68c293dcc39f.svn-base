@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.event.service.impl.EventMapper">
+
+	<select id="selectBnList" resultType="egovMap">
+	/** [Dp_SQL.xml][경로: egovframework.example.dp.service.impl.DpMapper.selectBnList][기능: 배너목록][SVN ID: wndrms7] */
+  		 SELECT *
+		   FROM (
+		         SELECT *
+		              , FLOOR(((A.RNUM - 1)  / #{rows}) + 1) AS PAGE_NUMBER
+		           FROM (
+		                 SELECT BNNR_MNG_NO
+		                      , SUBJ
+		                      , CONCAT(DP_STRT_DE, ' ~ ', DP_END_DE) AS EXPOSURE_PERIOD
+		                      <![CDATA[
+		                      , CASE
+		                             WHEN NOW() BETWEEN  DP_STRT_DE AND DATE_ADD(DP_END_DE, INTERVAL 1 DAY)   THEN   '진행중'
+		                             WHEN NOW() < DP_STRT_DE                                                  THEN   '대기중'
+		                             WHEN NOW() > DATE_ADD(DP_END_DE, INTERVAL 1 DAY)                         THEN   '마감'
+		                         END STATUS
+		                      ]]>
+		                      , DP_YN
+		                      , REGR
+		                      , DATE_FORMAT(DATE(REG_DT), "%Y. %m. %d") AS REG_DT
+		                      , @ROWNUM := @ROWNUM + 1 AS RNUM
+		                      , (SELECT COUNT(*) FROM T_DP_BNNR_MNG) AS TOTAL_CNT
+		                      , (SELECT CEIL(COUNT(*) / #{rows}) FROM T_DP_BNNR_MNG) AS TOTAL_PAGE
+		                   FROM T_DP_BNNR_MNG
+		                      , (SELECT @ROWNUM := 0) AS RNUM
+		                  ORDER BY REGR
+		                 ) A 
+		          ) B
+		    WHERE B.PAGE_NUMBER = #{page}
+	</select>
+	<select id="selectBnnrMngList" resultType="egovMap">
+		SELECT BNNR_MNG_NO
+		     , DTL_SEQ
+		     , BNNR_CONTS
+		     , IMG_ATT_FILE
+		     , CNNT_URL AS BNNR_URL
+		     , SORT_SEQ
+		  FROM T_DP_BNNR_DTL
+		 WHERE BNNR_MNG_NO = #{bnnrMngNo}
+	</select>
+	
+	<select id="selectBnnrMngInfo" resultType="egovMap">
+	/** [Dp_SQL.xml][egovframework.example.dp.service.impl.DpMapper.selectBnnrMngInfo][배너관리테이블 내용 셀렉트][HANQ] */
+	SELECT SUBJ
+	     , DP_STRT_DE
+	     , DP_END_DE
+	     , DP_YN
+	  FROM T_DP_BNNR_MNG
+	 WHERE BNNR_MNG_NO = #{bnnrMngNo}
+	</select>
+	
+	<insert id="insertBnnrMng" parameterType="map">
+		/** [Dp_SQL.xml][egovframework.example.dp.service.impl.DpMapper.insertBnnrMng][배너관리테이블 인서트][HANQ] */
+		<selectKey order="BEFORE" keyProperty="bnnrMngNo" resultType="Integer">
+			SELECT IFNULL(MAX(BNNR_MNG_NO), 0) + 1 as bnnrMngNo
+			  FROM T_DP_BNNR_MNG
+		</selectKey>
+		
+		INSERT   INTO   T_DP_BNNR_MNG
+		        (
+		           BNNR_MNG_NO         
+		         , SUBJ                
+		         , DP_STRT_DE         
+		         , DP_END_DE           
+		         , DP_YN               
+		         , REGR                
+		         , REG_DT
+		         , UPDR
+		         , UPD_DT
+		        )
+		        VALUES
+		        (
+		           #{bnnrMngNo}
+		         , #{subj}
+		         , #{dpStrtDe}
+		         , #{dpEndDe}
+		         , #{dpYn}
+		         , 'SYSTEM'
+		         , NOW()
+		         , 'SYSTEM'
+		         , NOW()
+		        )
+	</insert>
+	
+	<insert id="insertBnnrDtl" parameterType="map">
+	/** [Dp_SQL.xml][egovframework.example.dp.service.impl.DpMapper.insertBnnrDtl][배너상세테이블 인서트][HANQ] */
+	<selectKey order="BEFORE" keyProperty="dtlSeq" resultType="Integer">
+		SELECT IFNULL(MAX(DTL_SEQ), 0) + 1 as dtlSeq
+		  FROM T_DP_BNNR_DTL
+		 WHERE BNNR_MNG_NO = #{bnnrMngNo}
+	</selectKey>
+		INSERT INTO T_DP_BNNR_DTL
+		        (
+		           BNNR_MNG_NO         
+		         , DTL_SEQ                
+		         , IMG_ATT_FILE          
+		         , CNNT_URL           
+		         , BNNR_CONTS          
+		         , SORT_SEQ     
+		         , REGR                
+		         , REG_DT
+		         , UPDR
+		         , UPD_DT
+		        )
+		        VALUES
+		        (
+		           #{bnnrMngNo}
+		         , #{dtlSeq}
+		         , 1
+		         , #{bnnrUrl}
+		         , #{bnnrConts}
+		         , #{sortSeq}
+		         , 'SYSTEM'
+		         , NOW()
+		         , 'SYSTEM'
+		         , NOW()
+		        )
+	</insert>
+	
+	<update id="updateBnnrMng">
+	UPDATE T_DP_BNNR_MNG
+	           SET SUBJ       = #{subj}
+	             , DP_STRT_DE = #{dpStrtDt}
+	             , DP_END_DE  = #{dpEndDt}
+	             , DP_YN      = #{dpYn}
+	             , UPDR       = 'SYSTEM'
+	             , UPD_DT     = NOW()
+	         WHERE BNNR_MNG_NO = #{bnnrMngNo}
+	</update>
+	
+	<update id="updateBnnrDtl">
+	UPDATE T_DP_BNNR_DTL
+	       SET CNNT_URL   = #{bnnrUrl}
+	         , BNNR_CONTS = #{bnnrConts}
+	         , SORT_SEQ   = #{sortSeq}
+	         , UPDR       = 'SYSTEM'
+	         , UPD_DT     = NOW()
+	     WHERE BNNR_MNG_NO = #{bnnrMngNo}
+	       AND DTL_SEQ     = #{dtlSeq}
+	</update>
+	
+	<delete id="deleteBnnrDtl">
+	DELETE 
+	  FROM T_DP_BNNR_DTL
+	 WHERE BNNR_MNG_NO = #{bnnrMngNo}
+	       AND DTL_SEQ     = #{dtlSeq} 
+	</delete>
+</mapper>

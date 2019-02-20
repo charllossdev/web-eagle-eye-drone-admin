@@ -1,0 +1,14 @@
+package egovframework.example.Order.web;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class OrderInfo {
+
+	@RequestMapping(value = "/OrderInfo.do")
+	public String initOrderInfo() throws Exception {
+		
+		return "order/orderInfo";
+	}
+}

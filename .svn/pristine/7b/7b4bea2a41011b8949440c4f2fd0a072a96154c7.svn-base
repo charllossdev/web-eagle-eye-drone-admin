@@ -1,0 +1,558 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ include file="/WEB-INF/jsp/egovframework/example/cmmn/common_lib.jsp" %>
+	<!-- jstree css -->
+<link href="<c:url value='/js/dist/themes/default/style.css' />" rel="stylesheet" type="text/css">
+<link href="<c:url value='/common/css/icheck/skins/all.css'/>" rel="stylesheet">
+
+<!-- script -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="<c:url value='/js/dist/jstree.js' />"></script>
+<script src="<c:url value='/js/datepicker.js' />"></script>
+
+<script>
+
+var jsTreeCls = {
+		
+		$jsTree : $,
+		data	: [],
+		catLvNm	: ["전체", "대카테고리", "중카테고리", "소카테고리"],
+		selRow	: null,	
+		
+		/*
+		 * 카테고리 추가 후 새로운 카테고리로 데이터 셋팅
+		 * prdCatList : prdCatList(object)
+		 */
+		setNewData : function(prdCatList) {
+			
+			// 새로운 카테고리를 받을 배열 하나 선언
+			var datas = [];
+			
+			// 기존 트리 깨끗히 정리
+			this.$jsTree.empty().jstree("destroy");
+			
+			// 배열 한칸 한칸에 object가 들어가고 있는 상황이다.
+			datas[datas.length] = {
+				"id"		: "C000000000",
+				"parent" 	: "#",
+				"text"		: "전체",
+				"catLv"		: "0"
+			}
+			
+			var prdCatLength = prdCatList.length;
+			
+			for (var i = 0; i < prdCatLength; i++) {
+				
+				var nowData = {
+				
+					id		: prdCatList[i].catCd,		// 상품 카테고리 코드
+					text	: prdCatList[i].catEngNm,	// 상품 카테고리 영문명
+					parent	: prdCatList[i].upprCatCd, 	// 상품 부모 카테고리
+					catNm	: prdCatList[i].catNm,		// 상품 카테고리 한글명
+					catLv	: prdCatList[i].catLv, 		// 상품 뎁스
+					sortOrd	: prdCatList[i].sortOrd, 	// 상품 순서
+					sortSeq	: prdCatList[i].sortSeq, 	// 상품 seq
+					useYn	: prdCatList[i].useYn		// 노출 여부
+				};
+				
+				datas.push(nowData);
+			}
+			
+			this.initFn(datas);	// 리플레시 할때 jsTree로 내려 보내 준다...
+		},
+		
+		/*
+		 * 추가되는 카테고리의 코드 채번 메서드
+		 * data : data(object)
+		 * return : resultCatCd(String)
+		 */
+		setCatCd : function(data) {
+			$("#btnSave").show();	// "전체"일 경우도 추가버튼을 생성한다.
+		
+			var resultCatCd = "";
+			
+			// 파라미터의 node 데이터를 가져온다.
+			var rowNode = data.node;
+			
+			var catLv		= rowNode.original.catLv,	// 클릭한 노드의 catLv
+				rCatCd		= rowNode.original.id,		// 클릭한 노드의 catCd
+				childSize 	= rowNode.children.length;	// 클릭한 노드의 자식 노드의 수
+			
+			var parentNode = "";
+				
+			rCatCd = rCatCd.replace("C", "");
+			
+
+			// 부모 카테고리 값 구하기
+			parentNode = rCatCd.substr(0, catLv * 3);
+			
+			childSize = childSize + 1;
+			
+			// 카테고리에 0을 붙여서 세자리 만드는 로직
+			var childSizeStr = ("00" + childSize).substr(-3);
+			
+			resultCatCd = "C" + parentNode + childSizeStr;	// 소카테고리
+			
+			console.log("카테고리 레벨 : " + catLv);
+			
+			resultCatCd = resultCatCd + new Array(3 * (2 - catLv) + 1).join('0');	// 대카테고리, 중카테고리
+				
+			return resultCatCd;
+		},
+		
+		/*
+		 * 화면의 인풋태그 활성화 비활성화 처리
+		 */
+		inputDisabledProc : function(check) {
+			$("#catNm").prop("disabled", check);
+			$("#catEngNm").prop("disabled", check);
+			$("#sortSeq").prop("disabled", check);
+			$("[name='useYn']").prop("disabled", check);
+		},
+		
+		/*
+		 * 노드(카테고리) 클릭 시, 분류 추가 영역에 해당 노드 데이터 넣는 메서드
+		 * catData : data.node.original(object)
+		 */ 
+		selCat	: function(catData) {
+			console.log("catData", catData)
+			
+			if (catData.catLv == "0") {
+				
+				this.inputDisabledProc(true);
+				
+				
+				$("#btnAdd").show();
+				$("#btnDel").hide();
+				$("#btnSave").hide();
+			} else {
+				
+				this.inputDisabledProc(false);
+				
+				$("#btnDel").show();
+				$("#btnSave").show();
+				
+				if (catData.catLv == "3") {
+					$("#btnAdd").hide();
+				} else {
+					$("#btnAdd").show();
+				}
+			}
+			
+			// div 텍스트 영역
+			$("#catLvNm").val(this.catLvNm[catData.catLv]);
+			$("#catCd").text(catData.id);
+			
+			// input type=text
+			$("#catNm").val(catData.catNm);
+			$("#catEngNm").val(catData.text);
+			$("#sortSeq").val(catData.sortSeq);
+			
+			// input type=radio
+			$("#rdUse" + catData.useYn).prop("checked", true);
+			
+			// input typr=hidden
+			$("#catLv").val(catData.catLv);
+			$("#originalSortSeq").val(catData.sortSeq);
+		},
+		
+		eventListener	: function() {
+			var that = this,
+				selRow = null,	// 클릭한 카테고리 노드의 전체 데이터
+				// (내부함수에서 외부함수에 있는 변수를 참조하고 있으니까 안사라진다.)
+				insUpdGubun = "update";	// 저장버튼 클릭시 인서트인지 업데이트인지 구분
+				
+			var jsTree 	= $("#jsTree").jstree(true);
+			
+			var startUpprCatCd 	= "";
+			var startSortSeq	= "";
+			
+			// 드래그 시작 이벤트 리스터
+			$(document).on('dnd_start.vakata', function (e, data) {
+				console.log('dnd Start' ,data);					
+				
+				var node	= jsTree.get_node(data.element);
+				
+				console.log("node", node);
+				
+				startUpprCatCd 	= node.parent;
+				startSortSeq 	= node.original.sortSeq;
+			
+			});
+			
+			$(document).on('dnd_stop.vakata', function(e, data) {
+				console.log('dnd Stop' ,data);
+			
+				var node	= jsTree.get_node(data.element);
+		
+				if (node === false) {
+					
+					alert("동일 카테고리레벨의 하위로 넣을 수 없습니다.");
+					
+					jsTree.refresh();
+					
+					return;
+				}
+				
+				var stopUpprCatCd 	= node.parent;
+				var stopSortSeq 	= node.original.sortSeq;
+				var upprNode		= jsTree.get_node(stopUpprCatCd);
+				
+				console.log("upprNode", upprNode);
+				
+				$.each(upprNode.children, function(i, item) {
+					
+					if (item === node.original.id) {
+						
+						stopSortSeq = i + 1
+					}
+				});
+				
+				if (stopUpprCatCd !== startUpprCatCd) {
+					
+					alert("부모카테고리가 틀려");
+					
+					// 트리 초기화
+					jsTree.refresh();
+					
+					return;
+				} else {
+	
+					var param = {
+						
+							"catCd"				: node.original.id,
+							"upprCatCd" 		: startUpprCatCd,
+							"originalSortSeq" 	: startSortSeq,
+							"sortSeq"			: stopSortSeq,
+							"gunun"				: "update"
+							
+					};
+					
+					$.ajax({
+						type		: "post",
+						data		: param,
+						url			: "<c:url value='/savePrdCat.do' />",
+						
+						success		: function (data) {
+							
+							var jObj	= JSON.parse(data);
+							
+							if(jObj.result === "success") {
+								
+								alert("저장 성공");
+							} else {
+								
+								alert("저장 실패");
+							}
+						}
+					});				
+				}
+			
+			});
+			
+			// 카테고리를 클릭했을 때
+			this.$jsTree.on("select_node.jstree", function(e, data) {
+				console.log("data", data);
+				
+				selRow = data;
+				
+				insUpdGubun = "update";	// [예시] 사용자가 추가버튼을 눌렀는데 추가를 한하는 경우가 있기 때문
+				
+				that.selCat(data.node.original);
+				//console.log(data.selected);
+			});
+			
+			// 추가버튼 클릭 시, 하위 카테고리 데이터를 입력 받을 수 있도록 해주는 메서드
+			$("#btnAdd").click(function(){
+				var catLv = $("#catLv").val(),
+					catCd = "";
+				console.log(catLv)
+				
+				insUpdGubun = "insert";
+				
+				//if ($("#catLvNm").text() === "소카테고리") {
+				if (catLv === "3") {
+					alert("소카테고리에는 추가 할 수 없습니다.");
+					
+					return;	// 종료 시켜 버린다.
+				}
+				
+				// 비 활성화 영역 활성화
+				that.inputDisabledProc(false);
+				
+				// 인풋태그 데이터 수정
+				$("#catNm").val("");
+				$("#catEngNm").val("");
+				$("#sortSeq").val("").prop("disabled", false);
+				$("#rdUseY").prop("checked", true);
+				
+				// 구분영역 데이터 입력
+				//console.log(typeof(catLv));
+				//console.log(Number(catLv));
+				$("#catLvNm").val(that.catLvNm[Number(catLv)+1]);
+				
+				// 카테고리 채번
+				catCd = that.setCatCd(selRow);
+				$("#catCd").text(catCd);
+				console.log("다음 추가 코드 : " + catCd);
+				
+			});
+			
+			$("#btnSave").click(function(){
+				var catObj = {};
+				
+				// 구분 값 추가
+				//catObj.gubun	= "insert";
+				catObj.gubun	= insUpdGubun;
+				
+				if (insUpdGubun === "update") {
+					catObj.sortSeq = $("#sortSeq").val();
+					
+					var originalSortSeq = $("#originalSortSeq").val();
+					
+					// 노출 순서 텍스트 영역이 바뀌었다면
+					if (catObj.sortSeq !== originalSortSeq) {
+						catObj.originalSortSeq = originalSortSeq;
+					}
+				}
+				
+				// 저장 할 카테고리 레벨
+				catObj.catLv	= Number($("#catLv").val()) + 1;
+				console.log("저장 할 카테고리 레벨 : " + catObj.catLv);
+				
+				// 카테고리 명
+				catObj.catNm	= $("#catNm").val();
+				console.log("카테고리 명 : " + catObj.catNm);
+				
+				// 카테고리 영문명 명
+				catObj.caEngNm	= $("#catEngNm").val();
+				console.log("카테고리 명 : " + catObj.catEngNm);
+				
+				// 노출여부
+				catObj.useYn	= $("input[name='useYn']:checked").val();
+				console.log("노출여부 : " + catObj.useYn);
+				
+				// 저장 할 카테고리 코드
+				catObj.catCd	= $("#catCd").text();
+				console.log("저장 할 카테고리 코드 : " + catObj.catCd);
+				
+				// 부모 카테고리
+				catObj.upprCatCd	= selRow.node.original.id;
+				console.log("부모 카테고리 : " + catObj.upprCatCd);
+				
+				if (cmmn.isEmpty(catObj.catNm)) {
+					alert("카테고리명을 입력해 주세요");
+				}
+				
+				if (cmmn.isEmpty(catObj.catEngNm)) {
+					alert("카테고리명을 입력해 주세요");
+				}
+				
+				if (cmmn.isEmpty(catObj.catCd)) {
+					alert("카테고리코드를 입력해 주세요");
+				}
+				
+				// [Case - 2.1]
+				var that = jsTreeCls;
+				
+				$.ajax({
+					
+					url		: "<c:url value='/savePrdCat.do' />",
+					type 	: "post",
+					data	: catObj,
+					
+					success : function(result) {
+						var jObj = JSON.parse(result);
+						
+						if (jObj.result === "success") {
+							alert("저장 성공!");
+							
+							// [Case- 1]
+							//location.reload();	// 새로고침
+							
+							// [Case - 2.2] : 추가된 데이터로 새로 트리셋팅
+							that.setNewData(jObj.prdCatList);	
+							// -> refresh가 제대로 안되는 문제가 있다!!
+							// -> 로직만 주의깊게 볼 것!
+						} else {
+							alert("저장 실패!");
+						}
+					}
+				});
+			});
+			
+			$("#btnDel").click(function(){
+				var catCd = selRow.node.original.id;
+				
+				$.ajax({
+					
+					// 똑같이 삭제한다고 컨트롤러를 새로 만드는게 아닌 기존에 있는 걸 가져다 쓴다.
+					url		: "<c:url value='/savePrdCat.do' />",
+					type 	: "post",
+					data	: {	"catCd" : catCd,
+								"gubun" : "del"},	// 삭제 
+					
+					success : function(result) {
+						var jObj = JSON.parse(result);
+						
+						if (jObj.result === "success") {
+							alert("삭제 성공!");
+							
+							// location.reload();	// 새로고침
+						} else {
+							alert("삭제 실패!");
+						}
+					}
+				});
+			});
+		},
+		
+		init	: function() {
+			this.$jsTree = $("#jsTree");
+		},
+		
+		initFn	: function() {
+			
+			this.data = [  
+			             
+			             {
+			            	 "id"		: "C000000000",
+			            	 "parent" 	: "#",
+			            	 "text"		: "ALL CATEGORY",
+			         		 "catNm"	: "전체 카테고리", 
+			            	 "catLv"	: "0"	            	 		            	 
+			             },
+			             
+			   	       <c:forEach items="${shopCatList}" var="shopCatList" varStatus="status">
+							       
+				   	       <c:if test="${status.index ne 0}">
+				   	       	,
+				   	       </c:if>
+				   	       
+					       { "id" 		: "<c:out value='${shopCatList.catCd}'/>", 
+					    	 "parent" 	: "<c:out value='${shopCatList.upprCatCd}'/>", 
+					    	 "text" 	: "<c:out value='${shopCatList.catEngNm}'/>",
+					    	 "catNm"	: "<c:out value='${shopCatList.catNm}'/>",
+					    	 "catLv"	: "<c:out value='${shopCatList.catLv}'/>",
+				    		 "useYn" 	: "<c:out value='${shopCatList.useYn}'/>",
+							 "sortSeq" 	: "<c:out value='${shopCatList.sortSeq}'/>",
+							 "sortOrd" 	: "<c:out value='${shopCatList.sortOrd}'/>"
+					    	
+					       }
+					      	
+					       </c:forEach>
+				    	];
+			
+			// [Case 2.3] : 모든 함수에는 arguments라는 보이지 않는 파라미터가 존재한다. 
+			if (typeof arguments[0] === "object" && arguments[0].length > 0) {
+				console.log("arguments[0]", arguments[0]);	// datas
+				
+				this.data = arguments[0];	// 받아온 datas를 jsTree로 리플레시 한다.
+			}
+			
+			this.$jsTree.jstree({ 
+				
+				"core" : {
+			    	"data" : this.data,
+			    	"check_callback" : true
+				},
+				"plugins" : [ 
+	            	"wholerow",
+	            	"state",
+	            	"dnd"
+	            ]
+			});
+		}
+	}
+
+	$(function() {
+		//$("#jsTree").jstree();
+		
+		jsTreeCls.init();
+		jsTreeCls.initFn();
+		jsTreeCls.eventListener();		
+	})
+</script>
+
+        <!-- ============================================================== -->
+        <!-- Start Content  -->
+        <!-- ============================================================== -->
+              <div class="card-group">
+                  <!-- card -->
+                  <div class="card o-income">
+                      <div class="row">
+                  <div class="col-md-4">
+                      <div class="card card-body">
+                          <h3 class="box-title m-b-0">Shop Category Configure</h3>
+                          <p class="text-muted m-b-30 font-13">Eagle Eye Drone Shop Category Configure</p>
+                          <div class="row">
+                              <div class="col-sm-12 col-xs-12">
+                                  <div class="col-md-8 col-xs-12">
+									<div id="jsTree"></div>		                                        
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-md-8">
+                      <div class="card card-body">
+                          <h3 class="box-title m-b-0">Shop Category Setting Page</h3>
+                          <p class="text-muted m-b-30 font-13"> Use Configure Category Setting Control Management</p>
+                          <form class="">
+						<div class="form-group row">
+							<label for="inputCatLvNm" class="col-sm-3 text-right control-label col-form-label">Category Level</label>
+                                  <div class="col-sm-9">
+                                  	<input type="text" class="form-control" id="catLvNm" placeholder="Category Level" disabled="disabled">
+                                  </div>
+						</div>
+                              <div class="form-group row">
+                                  <label for="inputCatNm" class="col-sm-3 text-right control-label col-form-label">Category Name</label>
+                                  <div class="col-sm-9">
+                                      <input type="text" class="form-control" id="catNm" placeholder="Category Name">
+                                  </div>
+                              </div>
+                              <div class="form-group row">
+                                  <label for="inputCatEngNm" class="col-sm-3 text-right control-label col-form-label">English Name</label>
+                                  <div class="col-sm-9">
+                                      <input type="text" class="form-control" id="catEngNm" placeholder="Category English Name">
+                                  </div>
+                              </div>
+							<div class="form-group row">
+							<label for="inputPassword2" class="col-sm-3 text-right control-label col-form-label">Category Show</label>
+                             
+                                      <div class="col-sm-4">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="rdUseY" name="useYn" value="Y" class="custom-control-input" checked>
+                                            <label class="custom-control-label" for="rdUseY">OPEN</label>
+   										</div>
+   										<div class="custom-control custom-radio">
+                                            <input type="radio" id="rdUseN" name="useYn" value="N" class="custom-control-input">
+                                            <label class="custom-control-label" for="rdUseN">CLOSE</label>
+                                        </div>
+                                    </div>    
+                                  </div>
+  
+                              <div class="form-group row">
+                                  <label for="inputPassword3" class="col-sm-3 text-right control-label col-form-label">Category Order</label>
+                                  <div class="col-sm-9">
+                                      <input type="text" class="form-control" id="sortSeq" placeholder="Category Order">
+                                  </div>
+                              </div>
+                              <input type="hidden" id="catLv" name="catLv" value="" />
+                              <input type="hidden" id="originalSortSeq" name="originalSortSeq" value="" />
+                              <div class="form-group m-b-0">
+                                  <div class="offset-sm-3 col-sm-9">
+                                      <button type="button" id="btnAdd" class="btn btn-info waves-effect waves-light m-t-10">추가</button>
+                                      <button type="button" id="btnDel" class="btn btn-info waves-effect waves-light m-t-10">삭제</button>
+                                      <button type="button" id="btnSave" class="btn btn-info waves-effect waves-light m-t-10">저장</button>
+                                  </div>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+              </div>
+              </div>
+
+        <!-- ============================================================== -->
+        <!-- End Content  -->
+        <!-- ============================================================== -->

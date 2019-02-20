@@ -1,0 +1,57 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ include file="/WEB-INF/jsp/egovframework/example/cmmn/common_lib.jsp" %>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    
+    <link rel="icon" type="image/png" sizes="16x16" href="<c:url value='/common/images/templet/favicon.png'/>">
+    <title>EagleEye Admin Home</title>
+    <!-- This page CSS -->
+    <!-- chartist CSS -->
+    <link href="<c:url value='/common/css/morrisjs/morris.css'/>" rel="stylesheet">
+    <!--Toaster Popup message CSS -->
+    <link href="<c:url value='/common/css/toast-master/css/jquery.toast.css'/>" rel="stylesheet">
+    <!--c3 plugins CSS -->
+    <link href="<c:url value='/common/css/c3-master/c3.min.css'/>" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="<c:url value='/common/css/style.min.css'/>" rel="stylesheet">
+    <!-- Dashboard 1 Page CSS -->
+    <link href="<c:url value='/common/css/pages/dashboard1.css'/>" rel="stylesheet">
+    
+    <link href="<c:url value='/js/dist/themes/default/style.css' />" rel="stylesheet" type="text/css">   
+
+    
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <!-- <script src="<c:url value='/common/css/jquery/jquery-3.2.1.min.js'/>"></script> -->
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="../../../../../oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="../../../../../oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+	<!-- script -->
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="<c:url value='/js/dist/jstree.js' />"></script>
+	<script src="<c:url value='/js/datepicker.js' />"></script>
+
+<form id="header_frm" method="post" action="">
+	<input type="hidden" name="selectPageList" id="selectPageList">
+	<input type="hidden" name="stateNotification" id="stateNotification">
+	<input type="hidden" name="ftest" value="form_test1">
+	<input type="hidden" name="ftest" value="form_test2">
+	<input type="hidden" name="ftest" value="form_test3">
+	<input type="hidden" name="ftest" value="form_test4">
+</form>
+
+<script>
+
+</script>
+
+	

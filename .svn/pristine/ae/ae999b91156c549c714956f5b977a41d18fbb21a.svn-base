@@ -1,0 +1,13 @@
+package egovframework.example.payment.web;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class PaymentController {
+
+	@RequestMapping(value = "/PaymentConfig.do")
+	public String initPaymentConfig() throws Exception {
+		return "payment/paymentConfig";
+	}
+}

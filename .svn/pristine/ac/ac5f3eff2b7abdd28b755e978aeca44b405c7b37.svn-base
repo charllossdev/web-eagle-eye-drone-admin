@@ -1,0 +1,85 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ include file="/WEB-INF/jsp/egovframework/example/cmmn/common_lib.jsp" %>
+
+    <!-- 2019.01.18 Gallery Add Start -->
+
+<link href="<c:url value='/common/css/gridstack/gridstack.css'/>" rel="stylesheet">
+<link href="<c:url value='/common/css/pages/other-pages.css'/>" rel="stylesheet">
+
+\
+	<script src="<c:url value='/common/css/jqueryui/jquery-ui.min.js'/>"></script>
+    <script src="<c:url value='/common/js/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js'/>"></script>
+    <script src="<c:url value='/common/css/gridstack/lodash.js'/>"></script>
+    <script src="<c:url value='/common/css/gridstack/gridstack.js'/>"></script>
+    <script src="<c:url value='/common/css/gridstack/gridstack.jQueryUI.js'/>"></script>
+    
+    <script type="text/javascript">
+    
+    $(function() {
+        $('.grid-stack').gridstack({
+            width: 12,
+            alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            resizable: {
+                handles: 'e, se, s, sw, w'
+            }
+        });
+    });
+    </script>
+    <!--Custom JavaScript -->
+    <script src="<c:url value='/common/js/custom.min.js'/>"></script>
+
+<style type="text/css">.jqstooltip { position: absolute;left: 0px;top: 0px;visibility: hidden;background: rgb(0, 0, 0) transparent;background-color: rgba(0,0,0,0.6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";color: white;font: 10px arial, san serif;text-align: left;white-space: nowrap;padding: 5px;border: 1px solid white;z-index: 10000;}.jqsfield { color: white;font: 10px arial, san serif;text-align: left;}</style><style type="text/css" data-gs-style-id="gridstack-style-9797"></style>
+
+<script>
+
+$(function() {
+
+})
+
+</script>
+
+               <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Draggable Panel Portlets</h4>
+                                <h6 class="card-subtitle">Thus is a widget layout jquery plugin. <a href="http://troolee.github.io/gridstack.js/" target="_blank">gridstack.js</a> is used to design this layout. This is drag-and-drop multi-column grid. It allows you to build draggable responsive layouts.</h6>
+                                <div class="grid-stack grid-stack-instance-4430 grid-stack-animate" data-gs-width="12" data-gs-animate="yes" data-gs-current-height="15" style="height: 1180px;">
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="0" data-gs-y="0" data-gs-width="12" data-gs-height="1" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">Head</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="0" data-gs-y="1" data-gs-width="12" data-gs-height="2" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">TopBar</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide ui-resizable-disabled" data-gs-x="6" data-gs-y="6" data-gs-width="2" data-gs-height="2" data-gs-min-width="2" data-gs-no-resize="yes" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">Hot Item3</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="2" data-gs-y="6" data-gs-width="2" data-gs-height="2" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">Hot Item1</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="4" data-gs-y="6" data-gs-width="2" data-gs-height="2" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">Hot Item2</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="1" data-gs-y="3" data-gs-width="10" data-gs-height="3" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">Main Video</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="8" data-gs-y="6" data-gs-width="2" data-gs-height="2">
+                                        <div class="grid-stack-item-content ui-draggable-handle">Hot Item4</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="3" data-gs-y="8" data-gs-width="2" data-gs-height="2" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">Image</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="5" data-gs-y="8" data-gs-width="4" data-gs-height="2" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">Sub Video</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="2" data-gs-y="10" data-gs-width="9" data-gs-height="3" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">News</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                    <div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="4" data-gs-y="13" data-gs-width="5" data-gs-height="2" style="">
+                                        <div class="grid-stack-item-content ui-draggable-handle">Show Window Item</div>
+                                    <div class="ui-resizable-handle ui-resizable-e" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90; display: none;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90; display: none;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>

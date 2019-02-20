@@ -1,0 +1,125 @@
+package egovframework.example.products.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import egovframework.example.products.service.ProductsService;
+import egovframework.rte.psl.dataaccess.util.EgovMap;
+
+@Service
+public class ProductsServiceImpl implements ProductsService {
+
+	@Resource
+	private ProductsMapper productsMapper;
+	
+	@Override
+	public List<EgovMap> selectShopCatList() throws Exception {
+		// TODO Auto-generated method stub
+		return productsMapper.selectShopCatList();
+	}
+
+	@Override
+	public EgovMap savePrdCat(Map<String, Object> map) throws Exception {
+EgovMap result = new EgovMap();
+		
+		try {
+			String gubun = (String) map.get("gubun");
+			
+			if ("insert".equals(gubun)) {
+				productsMapper.insertPrdCat(map);	// 삽입
+			} else if ("del".equals(gubun)) {
+				// 재귀함수
+				// 하위 카테고리 구해서 처리하는 재귀 메서드 호출
+				this.lowerCatProc(map);
+			} else if ("update".equals(gubun)) {
+				String originalSortSeq = (String) map.get("originalSortSeq");
+				
+				// 노출순서가 바뀌지 않고, 카테고리 명만 바뀔 수 있기 때문에 JAVA단에서 처리한다.
+				if (originalSortSeq != null) {
+					String sortSeq = (String) map.get("sortSeq");
+					
+					int originalSortSeqInt 	= Integer.parseInt(originalSortSeq),
+						sortSeqInt			= Integer.parseInt(sortSeq);
+					
+					List<Integer> arr = new ArrayList<Integer>();
+					
+					if ((originalSortSeqInt - sortSeqInt) > 0) {
+						
+						// originalSortSeq > sortSeq (값이 작아지는 경우)		
+						map.put("proc", "plus");
+																
+						// 어디 순번에 있을지 알아야함으로 부모카테고리를 가져가야한다.
+						for (int i = sortSeqInt; i < originalSortSeqInt; i++) {
+							System.out.println("바뀌어야 할 노출 순서 데이터 : " + i);
+							arr.add(i);				
+						}
+						
+						map.put("arr",arr);
+						
+						productsMapper.updateCategorySortSeq(map);
+						
+					} else if ((originalSortSeqInt - sortSeqInt) < 0) {
+
+						// originalSortSeq < sortSeq (값이 커지는 경우)			
+						map.put("proc", "minus");
+						for (int i = sortSeqInt; i > originalSortSeqInt; i--) {
+							System.out.println("바뀌어야 할 노출 순서 데이터 : " + i);
+							arr.add(i);	
+						}
+						
+						map.put("arr",arr);						
+						
+						productsMapper.updateCategorySortSeq(map);
+						
+					}
+				}
+				
+				productsMapper.updateCategory(map);
+			}
+			
+			result.put("result", "success");
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			result.put("result", "fail");
+		}
+		
+		return result;
+	}
+
+	private void lowerCatProc(Map<String, Object> map) throws Exception{
+		
+		// 하위 카테고리 구하기(2depth)
+		List<EgovMap> lowerCatList = productsMapper.selectLowerCatList(map);
+		System.out.println(lowerCatList);
+	
+		int lowerCatListLength = lowerCatList.size();
+		
+		if (lowerCatListLength == 0) {
+			productsMapper.deleteCategory(map);	// --> 자식이 없으면 그냥 지우면 된다.
+		} else {
+			for (int i = 0; i < lowerCatListLength; i++) {
+				
+				this.lowerCatProc(lowerCatList.get(i)); // 재귀함수 호출~~!!
+			
+				// 상위 카테고리 자체도 같이 지워준다.
+				if ((lowerCatListLength - 1) == i) {	// for문 맨 마지막 index에서 상위 카테고리를 지운다.
+					productsMapper.deleteCategory(map);
+				}
+			}
+		}
+		
+	}
+
+	@Override
+	public List<EgovMap> selectProductsList() throws Exception {
+		
+		return productsMapper.selectProductsList();
+	}
+
+}

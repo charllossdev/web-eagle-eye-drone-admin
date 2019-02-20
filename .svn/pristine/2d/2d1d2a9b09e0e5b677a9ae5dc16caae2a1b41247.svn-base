@@ -1,0 +1,620 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ include file="/WEB-INF/jsp/egovframework/example/cmmn/common_lib.jsp" %>
+
+<link rel="stylesheet" type="text/css" href="<c:url value='/common/css/jqgrid/ui.jqgrid.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<c:url value='/common/css/jqgrid/jquery-ui.css'/>" >
+<link rel="stylesheet" href="<c:url value='/common/css/dropify/dist/css/dropify.min.css'/>">
+<link href="<c:url value='/common/css/pages/floating-label.css'/>" rel="stylesheet">
+<link href="<c:url value='/common/css/pages/file-upload.css'/>" rel="stylesheet">
+
+
+<link href="<c:url value='/common/css/bootstrap-datepicker/bootstrap-datepicker.min.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/common/css/timepicker/bootstrap-timepicker.min.css'/>" rel="stylesheet">
+<link href="<c:url value='/common/css/daterangepicker/daterangepicker.css'/>" rel="stylesheet">
+
+<script type="text/javascript" src="<c:url value='/jqgrid/Guriddo_jqGrid_JS_5_3_2/js/trirand/i18n/grid.locale-kr.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/jqgrid/Guriddo_jqGrid_JS_5_3_2/js/trirand/src/jquery.jqGrid.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/common/css/dropify/dist/js/dropify.min.js'/>"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+
+
+<script>
+
+var dpBnnrDtlCls = {
+		$bnnrDtlGrid		: $,
+		
+		girdInit			: function() {
+			this.$bnnrDtlGrid = $("#dpBnnrDtl");
+		},
+		
+		girdInitFn			: function() {
+			var that = this;
+			this.$bnnrDtlGrid.jqGrid({
+				url				: "<c:url value='/bnnrDtlList.do'/>",
+				colModel		: [
+					{label 		: "관리번호", 	name : "bnnrMngNo", 	width: 150, 		align: "center", hidden : true},
+					{label 		: "상세순번", 	name : "dtlSeq", 		width: 150, 		align: "center", hidden : true},
+					{label 		: "배너내용", 	name : "bnnrConts", 	width: 150, 		align: "left"},
+					{label 		: "배너이미지", name : "imgAttFile", 	width: 200, 		align: "right"  , formatter : gridActionCls.imageSelector},
+					{label 		: "URL", 		name : "bnnrUrl", 		width: 150, 		align: "left"},
+					{label 		: "노출순서", 	name : "sortSeq", 		width: 50, 			align: "center"},
+					{label 		: "구분", 		name : "btn", 			width: 50, 			align: "center", formatter : gridActionCls.gubunBtn}
+
+				    // formatter 속성 : jqGrid 테이블에서 행을 그릴때마다 해당 정의된 컬럼을 만들때마다, 메서드(콜백함수)를 호출하여 해당 컬럼의 속성을 변경 할 수 있는 기능
+				    // 예를들어 8개의 Rows 를 생성하면, 정의된 콜백함수는 8번 호출된다.
+				],
+				
+				// autowidth 	: 테이블의 크기를반응형으로 설정
+				autowidth		: true,
+				// cellEdit 	: 테이블의 각 컬럼에 데이터 입력을 받을 수 있도록 설정 
+				cellEdit		: true,
+				// cellsubmit	: Ajax 타는것을 방지하는 기능
+				cellsubmit		: "clientArray",
+				// multiselecct : 활성화 시 체크박스 생성
+				multiselect		: true,
+				// datatype		: Default 가 JSON이여서 ajax를 타기때문에
+				datatype		: "local",
+				// onCellSelect	: 셀을 한번 클릭했을때, 실행되는 콜백함수
+				onCellSelect	: function(rowId, colIndex, cellVal) {
+					var colModelArr = that.$bnnrDtlGrid.getGridParam("colModel");
+					
+					for (var i = 0, length = colModelArr.length; i < length; i++) {
+						
+						if (colModelArr[i].name === "btn"){
+							that.$bnnrDtlGrid.setColProp(colModelArr[i].name, 		{editable: false});							
+						} else if (colModelArr[i].name === "imgAttFile") {
+							that.$bnnrDtlGrid.setColProp(colModelArr[i].name, 		{editable: false});
+						} else {
+							that.$bnnrDtlGrid.setColProp(colModelArr[i].name, 		{editable: true});
+						}
+					}
+					
+					if (!CmmnJsUtil.isEmpty(rowId)) {
+						// 최초 클릭시 editCell 되도록 설정
+						that.$bnnrDtlGrid.editCell(rowId, colIndex, true);
+					}
+
+				}
+				
+			})
+			
+			<c:if test="${param.bnnrMngNo ne null and param.bnnrMngNo ne ''}">
+
+				this.$bnnrDtlGrid.setGridParam({
+		            
+		            datatype		: "json",
+		            mtype			: "GET",
+		            postData		: {"bnnrMngNo": "<c:out value='${param.bnnrMngNo}'/>"},	
+		            loadComplete	: function(data) {
+		               console.log("data : ", data);
+		            }
+		         }).trigger("reloadGrid");
+			</c:if>
+
+		}
+}
+
+	var CmmnJsUtil = {
+	
+		    isEmpty : function(val) {
+		    val = val + "";
+		    
+		    // 공백제거
+		     val = val.replace(/(\s*)/g, "");
+		    
+		        if (null == val || "" == val ||
+		        val == undefined || typeof(val) == undefined ||
+		        "undefined" == val || "NaN" == val) {
+		            return true;
+		        } else {
+		            return false;
+		        }
+		    },
+		    
+		    isNumeric : function(val) {
+	
+		    if (/^[0-9]*$/.test(val)) {
+		            return true;
+		        } else {
+		            return false;
+		        }
+		    }
+		};
+
+var validChkCls = {
+		
+		gridValidChkFn		: function() {
+			var $bnnrDtlGrid		= $("#dpBnnrDtl");
+			var dataList			= $bnnrDtlGrid.getRowData();
+			var colModelArr			= $bnnrDtlGrid.getGridParam("colModel");
+			var idsArr				= $bnnrDtlGrid.jqGrid("getDataIDs");
+			var eachEmptyChk		= 0;
+			var eachNumChk			= 0;
+			var editedChk			= 0;
+			
+			for (var i = 0, length = dataList.length; i< length; i++) {
+					
+				for (var j = 3, cmLength = colModelArr.length -1; j< cmLength; j++){
+					
+					var data	= dataList[i][colModelArr[j]["name"]];
+					var val		= CmmnJsUtil.isEmpty(data);
+					
+					if (val) {
+						eachEmptyChk++;
+					}
+					
+					if (colModelArr[j]["name"] === "sortSeq" && !(CmmnJsUtil.isNumeric(data))) {
+						eachNumChk++;;
+					}
+
+				}
+			}
+			
+			for (var k = 0, idLength = idsArr.length; k < idLength; k++) {
+				var bnnrMngNo 	= $bnnrDtlGrid.getCell(idsArr[k], "bnnrMngNo");
+				
+				if ($("#" + idsArr[k]).hasClass("edited")) {
+					console.log("변경됨")
+					editedChk++;
+				} else {
+					console.log("변경 안됨");
+				}
+			}
+			
+			if (eachEmptyChk > 0) {
+				
+				alert("빈값이 존재합니다.");
+				
+				return false;
+			}
+			
+			if (eachNumChk > 0) {
+				
+				alert("노출 순서는 숫자만 입력가능 ");
+				
+				return false;
+			}
+			
+			if (editedChk === 0) {
+				alert("변경된 셀이 없습니다.");
+				return false;
+			}
+			
+			return true;
+
+		}, 
+		
+		empthChkFn			: function() {
+			var bool = true; 
+			
+			$(".empty").each(function () {
+				var $this = $(this);
+				
+				// 빈값 = " " 뛰어쓰기를 전부 없애주는 정규식
+				var removeBlankData = $this.val().replace(/(\s*)/g, "");
+				
+				$this.val(removeBlankData);
+				
+				if (bool === true && $this.val() === "") {
+					alert($this.data("name") + "은/는 필수 입력 값입니다.");
+					
+					bool = false;
+				}
+
+			});
+			
+			return bool;
+		},
+		
+		radioChkFn			: function() {
+			
+			var bool = true;
+			
+			$(".radioOnly").each(function () {
+				var $this = $(this);
+				
+				var radioChkedLength = $this.find("input[type='radio']:checked").length;
+				
+				if (bool === true && radioChkedLength < 1) {
+					alert($this.data("name") + "은/는 필수 입력 값입니다.");
+					
+					bool = false;
+				}
+			});
+			
+			return bool;
+		}
+}
+
+var gridActionCls = {
+		
+		removerowFn			: function() {
+			var $bnnrDtlGrid	= $("#dpBnnrDtl");
+			var chkedData		= $bnnrDtlGrid.getGridParam("selarrrow");
+			var jsonArray		= [];
+			var emptyChk		= 0;
+			
+			console.log("chkedDAta : ", chkedData);
+			
+			if (chkedData.length === 0) {
+				alert("삭제 할 데이터를 선택하여 주십시오.");
+			}
+			
+			for (var i = 0, length = chkedData.length; i < length; i++) {
+				var bnnrMngNo 	= $bnnrDtlGrid.getCell(chkedData[i], "bnnrMngNo");
+				var jsonObj		= {};
+				
+				jsonObj.bnnrMngNo		= bnnrMngNo;
+				jsonObj.dtlSeq			= $bnnrDtlGrid.getCell(chkedData[i], "dtlSeq");
+				jsonObj.editType		= "delete";
+				
+				jsonArray[jsonArray.length] = jsonObj;
+				
+				if(CmmnJsUtil.isEmpty(bnnrMngNo)) {
+					emptyChk++;
+				}
+			}
+			
+			if (emptyChk > 0) {
+				alert("삭제 불가능한 로우가 포함되어 있습니다.");
+				
+				return;
+			}
+			
+			
+			$.ajax({
+				
+				url 	: "<c:url value='/saveBnnrData.do'/>",
+				type	: "POST",
+				data	: { 
+							"gridRowData" : JSON.stringify(jsonArray)
+						  },
+							
+				success	: function(data) {
+					
+					if(data.result === "success") {
+						alert("삭제 성공");
+						
+						$bnnrDtlGrid.trigger("reloadGrid");
+					} else {
+						alert("삭제 실패");
+					}
+				}
+			})
+			
+		}, 
+		
+		getSaveData			: function() {
+			var $bnnrDtlGrid	= $("#dpBnnrDtl")
+			var idsArr			= $bnnrDtlGrid.jqGrid("getDataIDs");
+			var jsonArray		= [];
+			
+			for (var i = 0, length = idsArr.length; i < length; i++) {
+				
+				if($("#" + idsArr[i]).hasClass("edited")) {
+
+					var jsonObj = $bnnrDtlGrid.getRowData(idsArr[i]);
+					
+					console.log("한 줄 데이터 : " , jsonObj);
+					
+					if (CmmnJsUtil.isEmpty(jsonObj.bnnrMngNo)) {
+						jsonObj.editType = "insert";
+						
+					} else {
+						jsonObj.editType = "update";
+					}
+					
+					jsonArray[jsonArray.length] = jsonObj;
+				}
+			}
+			
+			return jsonArray;
+		},
+		
+		validChkcallFn		: function() {
+			
+			
+			if (!validChkCls.gridValidChkFn()) {
+				return false;
+			}
+			
+			if (!validChkCls.radioChkFn()) {
+				return false;
+			}
+			
+			if (!validChkCls.empthChkFn()) {
+				return false;
+			};
+			
+			return true;
+		},
+		
+		saveFn			: function() {
+			
+			$("#dpBnnrDtl").editCell(0, 0, false);
+			
+			// 유효성 체크
+			if(!this.validChkcallFn()) {
+				return ;
+			}
+
+			var bnnrMngData = {
+
+				// 프로퍼티 생성	
+				"subj"		: $("input[name='subj']").val(),
+				"dpStrtDe"	: $("input[name='dpStrtDe']").val(),
+				"dpEndDe"	: $("input[name='dpEndDe']").val(),
+				"dpYn"		: $("input[name='dpYn']").val()							
+			}
+			
+			<c:choose>
+				<c:when test="${param.bnnrMngNo ne null and param.bnnrMngNo ne ''}">
+					bnnrMngData.bnnrMngNO 	= "<c:out value='${param.bnnrMngNo}'/>";
+					bnnrMngData.editType	= "update";
+				</c:when>
+				<c:otherwise>
+					bnnrMngData.bnnrMngNO = "";
+					bnnrMngData.editType	= "insert";
+				</c:otherwise>
+			</c:choose>
+
+			var gridRowData = this.getSaveData();
+			console.log("gridRowData : " , gridRowData);
+			
+			$.ajax({
+				
+				url 	: "<c:url value='/saveBnnrData.do'/>",
+				type	: "POST",
+				data	: { "bnnrMngData" : JSON.stringify(bnnrMngData),
+							"gridRowData" : JSON.stringify(gridRowData)
+						  },
+							
+				success	: function(data) {
+					
+					if(data.result === "success") {
+						alert("저장 성공");
+						
+						location.href = "<c:url value='/dpBnnrMng.do'/>";
+					} else {
+						alert("저장 실패");
+					}
+				}
+			})
+		},
+		
+		delRowFn			: function(rowId) {
+			var $bnnrDtlGrid		= $("#dpBnnrDtl");
+			
+			$bnnrDtlGrid.delRowData(rowId);
+			document.getElementById('dpBnnrDtl').scrollIntoView();
+		
+		},
+		gubunBtn			: function(cellValue, options, rowObject) {
+						
+			var val = CmmnJsUtil.isEmpty(rowObject.bnnrMngNo);
+			var data ="";
+			if (val) {
+				data = "<a href='#' onclick='gridActionCls.delRowFn(" + options.rowId + ")'>행삭제</a>";
+			}
+
+			return data;
+		},
+		
+		imageSelector		: function(cellValue, options, rowObject) {
+			
+			var data = "";
+			
+			// data = "<div class='form-group col-md-3 m-t-20 align-self-right'><div class='fileinput fileinput-new input-group' data-provides='fileinput'><div class='form-control' data-trigger='fileinput'> <i class='glyphicon glyphicon-file fileinput-exists'></i> <span class='fileinput-filename'></span></div> <span class='input-group-addon btn btn-default btn-file'> <span class='fileinput-new'>Select file</span> <span class='fileinput-exists'>Change</span><input type='hidden'><input type='file' name='...'> </span> <a href='javascript:void(0)' class='input-group-addon btn btn-default fileinput-exists' data-dismiss='fileinput'>Remove</a> </div></div>";
+			data = "<div class='card-body'><h4 class='card-title'>File Upload</h4><label for='input-file-now-custom-2'>You can set the height</label><div class='dropify-wrapper' style='height: 514px;'><div class='dropify-message'><span class='file-icon'></span> <p>Drag and drop a file here or click</p><p class='dropify-error'>Ooops, something wrong appended.</p></div><div class='dropify-loader'></div><div class='dropify-errors-container'><ul></ul></div><input type='file' id='input-file-now-custom-2' class='dropify' data-height='500'><button type='button' class='dropify-clear'>Remove</button><div class='dropify-preview'><span class='dropify-render'></span><div class='dropify-infos'><div class='dropify-infos-inner'><p class='dropify-filename'><span class='file-icon'></span> <span class='dropify-filename-inner'></span></p><p class='dropify-infos-message'>Drag and drop or click to replace</p></div></div></div></div></div>"
+
+			
+			return data;
+			
+		}, 
+		
+		addRowFn			: function() {
+			var $bnnrDtlGrid	= $("#dpBnnrDtl");
+		
+			var addData			= {};
+			var totalRecord		= 0
+			var colModelArr		= $bnnrDtlGrid.getGridParam("colModel");;
+			var idsArr			= $bnnrDtlGrid.jqGrid("getDataIDs");
+		
+			if (idsArr.length !== 0) {
+				
+				totalRecord = Math.max.apply(null, idsArr);
+			}
+			
+		
+			for (var i = 0, length = colModelArr.length; i < length; i++) {
+				addData[colModelArr[i].name] = "";
+
+			}
+
+			$bnnrDtlGrid.addRowData(totalRecord + 1, addData);
+		}
+}
+
+$(function() {
+	
+	dpBnnrDtlCls.girdInit();
+	dpBnnrDtlCls.girdInitFn();
+	
+	
+    // Basic
+    $('.dropify').dropify();
+
+    // Translated
+    $('.dropify-fr').dropify({
+        messages: {
+            default: 'Glissez-déposez un fichier ici ou cliquez',
+            replace: 'Glissez-déposez un fichier ou cliquez pour remplacer',
+            remove: 'Supprimer',
+            error: 'Désolé, le fichier trop volumineux'
+        }
+    });
+
+    // Used events
+    var drEvent = $('#input-file-events').dropify();
+
+    drEvent.on('dropify.beforeClear', function(event, element) {
+        return confirm("Do you really want to delete \"" + element.file.name + "\" ?");
+    });
+
+    drEvent.on('dropify.afterClear', function(event, element) {
+        alert('File deleted');
+    });
+
+    drEvent.on('dropify.errors', function(event, element) {
+        console.log('Has Errors');
+    });
+
+    var drDestroy = $('#input-file-to-destroy').dropify();
+    drDestroy = drDestroy.data('dropify')
+    $('#toggleDropify').on('click', function(e) {
+        e.preventDefault();
+        if (drDestroy.isDropified()) {
+            drDestroy.destroy();
+        } else {
+            drDestroy.init();
+        }
+    })
+
+})
+</script>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Animated Line Inputs Form With Floating Labels</h4>
+             	<h6 class="card-subtitle">Just add <code>floating-labels</code> class to the form and <code>has-warning, has-success, has-danger &amp; has-error</code> for various inputs. For input with icon add <code>has-feedback</code> class.</h6>
+
+                <form class="form">
+                    <div class="form-group m-t-40 row">
+                        <label for="example-text-input" class="col-2 col-form-label">Text</label>
+                        <div class="col-10">
+                            <input class="form-control" type="text" value="" id="example-text-input" placeholder="Banner Name">                    
+                        </div>
+                    </div>
+                    
+                    <div class="form-group row">
+                        <label for="example-date-input" class="col-2 col-form-label">Date</label>
+                        <div class="col-2">
+                            <input class="form-control" type="date" value="" id="example-date-input">
+                        </div>
+                        -
+                        <div class="col-2">
+                            <input class="form-control" type="date" value="" id="example-date-input">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                    	<label for="example-date-input" class="col-2 col-form-label">Date</label>
+                    <div class="col-md-4">
+                          <input type="text" class="form-control input-daterange-timepicker" name="daterange" value="01/01/2015 1:30 PM - 01/01/2015 2:00 PM">
+                 	</div>
+                 	</div>	
+                  
+                    <div class="form-group row">
+                        <label for="example-month-input" class="col-2 col-form-label">Select</label>
+                        <div class="col-10">
+                         	<div class="col-sm-4">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="rdUseY" name="useYn" value="Y" class="custom-control-input" checked>
+                                    <label class="custom-control-label" for="rdUseY">OPEN</label>
+								</div>
+								<div class="custom-control custom-radio">
+                                    <input type="radio" id="rdUseN" name="useYn" value="N" class="custom-control-input">
+                                    <label class="custom-control-label" for="rdUseN">CLOSE</label>
+                              	</div>
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="daterangepicker ltr show-calendar opensright" style="top: 1237px; left: 485.328px; right: auto; display: none;"><div class="ranges"></div><div class="calendar left"><div class="calendar-table"><table class="table-condensed"><thead><tr><th class="prev available"><span></span></th><th colspan="5" class="month">Jan 2015</th><th></th></tr><tr><th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th></tr></thead><tbody><tr><td class="weekend off available" data-title="r0c0">28</td><td class="off available" data-title="r0c1">29</td><td class="off available" data-title="r0c2">30</td><td class="off available" data-title="r0c3">31</td><td class="available" data-title="r0c4">1</td><td class="available" data-title="r0c5">2</td><td class="weekend available" data-title="r0c6">3</td></tr><tr><td class="weekend available" data-title="r1c0">4</td><td class="available" data-title="r1c1">5</td><td class="available" data-title="r1c2">6</td><td class="available" data-title="r1c3">7</td><td class="active start-date available" data-title="r1c4">8</td><td class="in-range available" data-title="r1c5">9</td><td class="weekend in-range available" data-title="r1c6">10</td></tr><tr><td class="weekend in-range available" data-title="r2c0">11</td><td class="in-range available" data-title="r2c1">12</td><td class="in-range available" data-title="r2c2">13</td><td class="in-range available" data-title="r2c3">14</td><td class="in-range available" data-title="r2c4">15</td><td class="in-range available" data-title="r2c5">16</td><td class="weekend in-range available" data-title="r2c6">17</td></tr><tr><td class="weekend in-range available" data-title="r3c0">18</td><td class="in-range available" data-title="r3c1">19</td><td class="in-range available" data-title="r3c2">20</td><td class="in-range available" data-title="r3c3">21</td><td class="in-range available" data-title="r3c4">22</td><td class="in-range available" data-title="r3c5">23</td><td class="weekend in-range available" data-title="r3c6">24</td></tr><tr><td class="weekend in-range available" data-title="r4c0">25</td><td class="in-range available" data-title="r4c1">26</td><td class="in-range available" data-title="r4c2">27</td><td class="in-range available" data-title="r4c3">28</td><td class="in-range available" data-title="r4c4">29</td><td class="in-range available" data-title="r4c5">30</td><td class="weekend in-range available" data-title="r4c6">31</td></tr><tr><td class="weekend off in-range available" data-title="r5c0">1</td><td class="off in-range available" data-title="r5c1">2</td><td class="off in-range available" data-title="r5c2">3</td><td class="off in-range available" data-title="r5c3">4</td><td class="off in-range available" data-title="r5c4">5</td><td class="off in-range available" data-title="r5c5">6</td><td class="weekend off in-range available" data-title="r5c6">7</td></tr></tbody></table></div><div class="calendar-time"><select class="hourselect"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12" selected="selected">12</option></select> : <select class="minuteselect"><option value="0" selected="selected">00</option><option value="30">30</option></select> <select class="ampmselect"><option value="AM" selected="selected">AM</option><option value="PM">PM</option></select></div></div><div class="calendar right"><div class="calendar-table"><table class="table-condensed"><thead><tr><th></th><th colspan="5" class="month">Feb 2015</th><th class="next available"><span></span></th></tr><tr><th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th></tr></thead><tbody><tr><td class="weekend off in-range available" data-title="r0c0">25</td><td class="off in-range available" data-title="r0c1">26</td><td class="off in-range available" data-title="r0c2">27</td><td class="off in-range available" data-title="r0c3">28</td><td class="off in-range available" data-title="r0c4">29</td><td class="off in-range available" data-title="r0c5">30</td><td class="weekend off in-range available" data-title="r0c6">31</td></tr><tr><td class="weekend in-range available" data-title="r1c0">1</td><td class="in-range available" data-title="r1c1">2</td><td class="in-range available" data-title="r1c2">3</td><td class="in-range available" data-title="r1c3">4</td><td class="in-range available" data-title="r1c4">5</td><td class="in-range available" data-title="r1c5">6</td><td class="weekend in-range available" data-title="r1c6">7</td></tr><tr><td class="weekend in-range available" data-title="r2c0">8</td><td class="in-range available" data-title="r2c1">9</td><td class="in-range available" data-title="r2c2">10</td><td class="in-range available" data-title="r2c3">11</td><td class="in-range available" data-title="r2c4">12</td><td class="active end-date available" data-title="r2c5">13</td><td class="weekend available" data-title="r2c6">14</td></tr><tr><td class="weekend available" data-title="r3c0">15</td><td class="available" data-title="r3c1">16</td><td class="available" data-title="r3c2">17</td><td class="available" data-title="r3c3">18</td><td class="available" data-title="r3c4">19</td><td class="available" data-title="r3c5">20</td><td class="weekend available" data-title="r3c6">21</td></tr><tr><td class="weekend available" data-title="r4c0">22</td><td class="available" data-title="r4c1">23</td><td class="available" data-title="r4c2">24</td><td class="available" data-title="r4c3">25</td><td class="available" data-title="r4c4">26</td><td class="available" data-title="r4c5">27</td><td class="weekend available" data-title="r4c6">28</td></tr><tr><td class="weekend off available" data-title="r5c0">1</td><td class="off available" data-title="r5c1">2</td><td class="off available" data-title="r5c2">3</td><td class="off available" data-title="r5c3">4</td><td class="off available" data-title="r5c4">5</td><td class="off available" data-title="r5c5">6</td><td class="weekend off available" data-title="r5c6">7</td></tr></tbody></table></div><div class="calendar-time"><select class="hourselect"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12" selected="selected">12</option></select> : <select class="minuteselect"><option value="0" selected="selected">00</option><option value="30">30</option></select> <select class="ampmselect"><option value="AM" selected="selected">AM</option><option value="PM">PM</option></select></div></div><div class="drp-buttons"><span class="drp-selected">01/08/2015 - 02/13/2015</span><button class="cancelBtn btn btn-sm btn-inverse" type="button">Cancel</button><button class="applyBtn btn btn-sm btn-danger" type="button">Apply</button> </div></div>
+                    <div class="form-group row">
+                        <label for="example-color-input" class="col-2 col-form-label">Color</label>
+                        <div class="col-10">
+                            <input class="form-control" type="color" value="#563d7c" id="example-color-input">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="example-color-input" class="col-2 col-form-label">Input Range</label>
+                        <div class="col-10">
+                            <input type="range" class="form-control" id="range" value="50">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="col-sm-12">
+       <div class="card">
+            <div class="card-body">
+            	<h4 class="card-title">Animated Line Inputs Form With Floating Labels</h4>
+             	<h6 class="card-subtitle">Just add <code>floating-labels</code> class to the form and <code>has-warning, has-success, has-danger &amp; has-error</code> for various inputs. For input with icon add <code>has-feedback</code> class.</h6>
+             	<div class="col-md-12 align-self-center text-right">
+             		<div class="d-flex justify-content-end align-items-center">
+             			<ol class="breadcrumb"><li class="breadcrumb-item">
+             				<a href=""></a></li>
+             			</ol>
+             			<button class="btn waves-effect waves-light btn-primary d-none d-lg-block m-l-15" onclick="gridActionCls.addRowFn()">Add Banner 
+             				<li class="fa fas fa-plus-circle"></li>
+             			</button>
+             			<button class="btn waves-effect waves-light btn-danger d-none d-lg-block m-l-15" onclick="gridActionCls.removerowFn()">Delete Banner 
+             				<li class="fa fa-times-circle"></li>
+             			</button>
+
+             		</div>
+             	</div>
+		    	<table id="dpBnnrDtl"></table>
+	    	
+		    	<div class="col-md-12 align-self-center text-center">
+             		<div class="d-flex justify-content-end align-items-center">
+             			<ol class="breadcrumb"><li class="breadcrumb-item">
+             				<a href=""></a></li>
+             			</ol>
+             			<button class="btn waves-effect waves-light btn-primary d-none d-lg-block m-l-15" onclick="gridActionCls.saveFn()">Save Banner 
+             				<li class="fa fas fa-plus-circle"></li>
+             			</button>
+             			<button class="btn waves-effect waves-light btn-danger d-none d-lg-block m-l-15" onclick="">Cancel 
+             				<li class="fa fa-times-circle"></li>
+             			</button>
+
+             		</div>
+             	</div>
+		    
+		    </div>
+	    </div>
+    </div>
+    
+	<div class="col-sm-12">
+       <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Animated Line Inputs Form With Floating Labels</h4>
+             	<h6 class="card-subtitle">Just add <code>floating-labels</code> class to the form and <code>has-warning, has-success, has-danger &amp; has-error</code> for various inputs. For input with icon add <code>has-feedback</code> class.</h6>			    
+			     <form class="floating-labels m-t-40">
+
+                    <div class="form-group m-b-40">
+                        <input type="text" class="form-control input-sm" id="input9"><span class="bar"></span>
+                        <label for="input9">Small Input</label>
+                    </div>
+
+                    <div class="form-group has-success has-feedback m-b-40">
+                        <input type="text" class="form-control form-control-success" id="input14"><span class="bar"></span>
+                        <label for="input14">Success State With Feedback</label>
+                    </div>
+                    <div class="form-group has-danger has-error has-feedback m-b-5">
+                        <input type="text" class="form-control form-control-danger" id="input15"><span class="bar"></span>
+                        <label for="input15">Error State With Feedback</label>
+                    </div>
+                </form>
+           </div>
+      </div>
+  </div>
+    
+</div>
+
+
+
