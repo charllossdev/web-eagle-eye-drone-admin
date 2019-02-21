@@ -16,12 +16,17 @@
             <!-- ============================================================== -->
             <!-- toggle and nav items -->
             <!-- ============================================================== -->
-            <ul class="navbar-nav mr-auto">
-                <!-- This is  -->
-                <li class="nav-item hidden-sm-up"> <a class="nav-link nav-toggler waves-effect waves-light" href="javascript:void(0)"><i class="ti-menu"></i></a></li>
+            <ul class="nav navbar-nav mr-auto navbat-tab nav-tabs customtab" role="tablist">  
+                                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#home2" role="tab" aria-selected="false"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">Home</span></a> </li>
+                                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#profile2" role="tab" aria-selected="false"><span class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">Profile</span></a> </li>
+                                <li class="nav-item"> <a class="nav-link active show" data-toggle="tab" href="#messages2" role="tab" aria-selected="true"><span class="hidden-sm-up"><i class="ti-email"></i></span> <span class="hidden-xs-down">Messages</span></a> </li>
+            </ul>
+            <ul class="navbar-nav my-lg-0">
                 <!-- ============================================================== -->
                 <!-- Comment -->
                 <!-- ============================================================== -->
+                <li class="nav-item hidden-sm-up"> <a class="nav-link nav-toggler waves-effect waves-light" href="javascript:void(0)"><i class="ti-menu"></i></a></li>
+                
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="ti-email"></i>
                         <div class="notify"> <span class="heartbit"></span> <span class="point"></span> 
@@ -134,8 +139,6 @@
                         <input type="text" class="form-control" placeholder="Search &amp; enter"> <a class="srh-btn"><i class="ti-close"></i></a>
                     </form>
                 </li>
-            </ul>
-            <ul class="navbar-nav my-lg-0">
                 <!-- ============================================================== -->
                 <!-- mega menu -->
                 <!-- ============================================================== -->
