@@ -5,7 +5,24 @@
 
 $(function() {
 	
+	// Side Main Menu Click Event Handler
+	$(".side-main-menu").on("click", function() {
+		
+		var $this = $(this);
+		
+		//console.log($this.hasClass("active"));
+		/*
+		if($this.hasClass("active")) { 
+			
+			$this.removeClass("active");
+		} else {
+			$this.addClass("active");
+		}
+		*/
+	});
 	
+	
+
 });
 </script>
 
@@ -28,13 +45,13 @@ $(function() {
              	<c:forEach items="${menuSelectList}" var="mainMenuList">
              		<c:if test="${mainMenuList.catLv eq 1}">
 		             	<li>
-		             		<a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="<c:out value='${mainMenuList.catIconNm}'/>"></i>
+		             		<a class="has-arrow waves-effect waves-dark side-main-menu" href="javascript:void(0)" aria-expanded="false"><i class="<c:out value='${mainMenuList.catIconNm}'/>"></i>
 		             			<span class="hide-menu"><c:out value="${mainMenuList.catEngNm}"/></span>
 		             		</a>
 		                    <ul aria-expanded="false" class="collapse">
 		                    	<c:forEach items="${menuSelectList}" var="subMenuList">
 		                    		<c:if test="${subMenuList.catLv eq 2 && subMenuList.upprCatCd eq mainMenuList.catCd}">
-		                    			<li><a href="#"><c:out value="${subMenuList.catEngNm}"/><i class="fa fa-circle-o text-success"></i></a></li>
+		                    			<li id="<c:out value='${subMenuList.catEngNm}'/>"><a href="#"><c:out value="${subMenuList.catEngNm}"/><i class="fa fa-circle-o text-success"></i></a></li>
 		                    		</c:if>
 		                    	</c:forEach>
 		                    </ul>
