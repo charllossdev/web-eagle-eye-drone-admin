@@ -2,25 +2,168 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <script>
-
-// Document Ready
-$(function() {
 	
-	// Header Tabs Click Event
-	$(".navbar-tab").on("click", function() {
+	TabMenuFn = {
 		
-		// Select Choice Tag
-		var $this = $(this);
+		tabArr		: ["Main"],
+		tabFlag		: "",
 		
-		// All Tabs - Remove Highlight
-		$(".nav-tabs li").each(function() {
+		tabCheckYn	: function($aTag) {
+			
+			var that = this;
+			
+			// Check if a value exists in an 'Array'
+			if ($.inArray($aTag.data("code"), that.tabArr) > -1) {
+				
+				/* Exists - Move Selected Tab View */
+				that.tabToggle($aTag.data("code"));
+				that.tabActive($aTag.data("code"));
+				SideMenuFn.active($aTag.data("code"));
+			} else {
+				/* Not Exists */
+				
+				// Check Maximum Number of Tabs
+				if (that.tabArr.length >= 6) {
+					/* Max Tab Length */
+					alert("The maximum number of tabs is 6")
+				} else {
+					/* Add New Tab */
+					that.tabAdd($aTag);
+				}
+			}
+		},
 		
-			$(this).find("a").removeClass("show active");
+		tabAdd		: function($aTag) {
+			
+			// Dom Init
+			var tabRootLi		= document.createElement("li");
+			var tabSubA			= document.createElement("a");
+			var tabViewSpan1	= document.createElement("span");
+			var tabViewSpan2	= document.createElement("span");
+			var tabExitBtn		= document.createElement("button");
+			
+			// Dom Add Attribute
+			tabRootLi.setAttribute("class", "nav-item navbar-tab");
+			tabRootLi.setAttribute("data-tab", $aTag.data("code"));
+			
+			tabSubA.setAttribute("class", "nav-link");
+			tabSubA.setAttribute("data-toggle", "tab");
+			tabSubA.setAttribute("role", "tab");
+			tabSubA.setAttribute("aria-selected", false);
+			
+			tabViewSpan1.setAttribute("class", "hidden-sm-up");
+			tabViewSpan2.setAttribute("class", "hidden-xs-down custom-tab-container");
+			tabViewSpan2.textContent = $aTag.text() + "";
+			
+			tabExitBtn.setAttribute("type", "button");
+			tabExitBtn.setAttribute("class", "tab-btn-container fas fa-times");
+
+			tabSubA.appendChild(tabViewSpan1);
+			tabSubA.appendChild(tabViewSpan2);
+			tabSubA.appendChild(tabExitBtn);
+			tabRootLi.appendChild(tabSubA);
+			
+			// Add tab Array 
+			this.tabArr.push($aTag.data("code"));
+			
+			// Add Id = tabList
+			document.getElementById("tabList").appendChild(tabRootLi);
+
+			// Add New Content
+			con
+			
+			// Active Select Tab
+			this.tabToggle($aTag.data("code"));
+			this.tabActive($aTag.data("code"));
+			SideMenuFn.active($aTag.data("code"));
+		}, 
+		
+		tabToggle	: function(code) {
+			
+			var $dataTab	= $("[data-tab="  + code + "]");
+			var $dataCode	= $("[data-code=" + code + "]");
+						
+			$("#tabList").find(".tab-btn-container").hide();
+			$("#tabList > li").removeClass("custom-active-bold");
+			
+			$dataTab.find(".tab-btn-container").show();
+			$dataTab.addClass("custom-active-bold");
+		},
+		
+		tabClick	: function() {
+			var that = this;
+			
+			// Remove Btn Click
+			$("#tabList").on("click", ".tab-btn-container", that.tabRemove);
+			
+			$("#tabList").on("click", ".navbar-tab", function() {
+				
+				if (that.tabFlag === "TAB_STATE_REMOVE") {
+					that.tabFlag = "TAB_STATE_GOOD";
+				} else {
+					
+					var tabCode = $(this).data("tab");
+					
+					that.tabToggle(tabCode);
+					SideMenuFn.active(tabCode);
+				}
+				
+				
+			})
+		},
+		
+		tabActive	: function(code) {
+			
+			var $dataTab = $("[data-tab=" + code + "]");
+			
+			$("#tabList > li > a").removeClass("active show");
+			$dataTab.children().addClass("active show");
+		},
+		
+		tabRemove	: function() {
+			
+			var nextIndex;
+			var $this			= $(this);
+			var code 			= $this.closest("li").data("tab");
+			var index			= TabMenuFn.tabArr.indexOf(code);
+			TabMenuFn.tabFlag 	= "TAB_STATE_REMOVE";
+
+			TabMenuFn.tabArr.splice(index, 1);
+			
+			$this.closest("li").remove();
+			
+			if (index === TabMenuFn.tabArr.length) {
+				nextIndex = index -1;
+			} else {
+				nextIndex = index;
+			}
+			
+			TabMenuFn.tabToggle(TabMenuFn.tabArr[nextIndex]);
+			TabMenuFn.tabActive(TabMenuFn.tabArr[nextIndex]);
+		}
+	};
+
+	
+	// Document Ready
+	$(function() {
+		TabMenuFn.tabClick();
+		/*
+		// Header Tabs Click Event
+		$(".navbar-tab").on("click", function() {
+			
+			// Select Choice Tag
+			var $this = $(this);
+			
+			// All Tabs - Remove Highlight
+			$(".nav-tabs li").each(function() {
+			
+				$(this).find("a").removeClass("show active");
+			});
+			
+			$this.find("a").addClass("show active");
 		});
-		
-		$this.find("a").addClass("show active");
+		*/
 	});
-});
 
 </script>
 
@@ -35,14 +178,12 @@ $(function() {
         <!-- ============================================================== -->
         <!-- End Logo -->
         <!-- ============================================================== -->
-        <div class="navbar-collapse">
+        <div class="navbar-collapse nav-container">
             <!-- ============================================================== -->
             <!-- toggle and nav items -->
             <!-- ============================================================== -->
-            <ul class="nav navbar-nav mr-auto navbat-tab nav-tabs customtab" role="tablist"> 
-	            <li class="nav-item navbar-tab"> <a class="nav-link active show" data-toggle="tab" href="#content" role="tab" aria-selected="true"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Home</span></a> </li>
-	            <li class="nav-item navbar-tab"> <a class="nav-link" data-toggle="tab" href="#content" role="tab" aria-selected="false"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Profile</span></a> </li>
-	            <li class="nav-item navbar-tab"> <a class="nav-link" data-toggle="tab" href="#content" role="tab" aria-selected="fasle"><span class="hidden-sm-up"></span> <span class="hidden-xs-down">Messages</span></a> </li>
+            <ul class="nav navbar-nav mr-auto navbat-tab nav-tabs customtab" role="tablist" id="tabList"> 
+	            <li class="nav-item navbar-tab custom-active-bold" data-tab="Main"> <a class="nav-link active show" data-toggle="tab" href="#content" role="tab" aria-selected="true"><span class="hidden-sm-up"></span> <span class="hidden-xs-down custom-tab-container">Main</span></a> </li>
             </ul>
             <ul class="navbar-nav my-lg-0">
                 <!-- ============================================================== -->
