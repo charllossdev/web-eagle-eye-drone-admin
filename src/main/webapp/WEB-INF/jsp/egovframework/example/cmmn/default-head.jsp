@@ -28,6 +28,9 @@
     <!-- Dashboard 1 Page CSS -->
     <link href="<c:url value='/common/eagleeye-admin/main/dist/css/pages/dashboard1.css'/>" rel="stylesheet">
     
+    <!-- Commons CSS -->
+    <link href="<c:url value='/common/eagleeye-admin/cmmn/cmmn.custom.css'/>" rel="stylesheet">
+    
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
