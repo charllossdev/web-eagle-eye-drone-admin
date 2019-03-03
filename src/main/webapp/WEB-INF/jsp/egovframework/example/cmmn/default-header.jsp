@@ -41,6 +41,7 @@
 			var tabViewSpan1	= document.createElement("span");
 			var tabViewSpan2	= document.createElement("span");
 			var tabExitBtn		= document.createElement("button");
+			var tabConDiv		= document.createElement("div");
 			
 			// Dom Add Attribute
 			tabRootLi.setAttribute("class", "nav-item navbar-tab");
@@ -69,8 +70,12 @@
 			// Add Id = tabList
 			document.getElementById("tabList").appendChild(tabRootLi);
 
+			// Add New Content Div Area
+			tabConDiv.setAttribute("id", $aTag.data("code") + "Content");
+			$("#tabContentArea").append(tabConDiv);
+				
 			// Add New Content
-			con
+			ContentFn.pageLoad($aTag);
 			
 			// Active Select Tab
 			this.tabToggle($aTag.data("code"));
@@ -80,14 +85,22 @@
 		
 		tabToggle	: function(code) {
 			
+			// Init Data Tag 
 			var $dataTab	= $("[data-tab="  + code + "]");
 			var $dataCode	= $("[data-code=" + code + "]");
 						
 			$("#tabList").find(".tab-btn-container").hide();
 			$("#tabList > li").removeClass("custom-active-bold");
 			
+			// Hide Content
+			$("#tabContentArea > div").hide();
+			
+			// Active Close Btn & Append Bold Texter
 			$dataTab.find(".tab-btn-container").show();
 			$dataTab.addClass("custom-active-bold");
+			
+			// Show Content
+			$("#" + code + "Content").show();
 		},
 		
 		tabClick	: function() {
@@ -131,6 +144,7 @@
 			TabMenuFn.tabArr.splice(index, 1);
 			
 			$this.closest("li").remove();
+			$("#" + code + "Content").remove();
 			
 			if (index === TabMenuFn.tabArr.length) {
 				nextIndex = index -1;
