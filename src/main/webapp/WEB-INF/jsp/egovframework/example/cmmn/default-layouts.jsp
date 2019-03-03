@@ -15,7 +15,7 @@
 	    <!-- ============================================================== -->
 	</head>
 	
-	<body class="skin-default-dark fixed-layout mini-sidebar lock-nav">
+	<body class="fixed-layout mini-sidebar lock-nav skin-red-dark">
     
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
