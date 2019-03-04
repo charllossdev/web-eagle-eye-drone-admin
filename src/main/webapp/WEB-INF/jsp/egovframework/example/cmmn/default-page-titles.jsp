@@ -30,14 +30,14 @@
 				$("#closeTabBtn").find("i").addClass("fas fa-registered");
 				
 				$("#closeTabBtn").removeClass("btn waves-effect waves-light btn-danger d-none d-lg-block m-l-15");
-				$("#closeTabBtn").addClass("btn waves-effect waves-light btn-primary d-none d-lg-block m-l-15");
+				$("#closeTabBtn").addClass("btn waves-effect waves-light btn-warning d-none d-lg-block m-l-15");
 			} else {
 				
 				$("#closeTabBtn").find("i").text("  Closed");
 				$("#closeTabBtn").find("i").removeClass("fas fa-registered");
 				$("#closeTabBtn").find("i").addClass("fa fa-times-circle");
 				
-				$("#closeTabBtn").removeClass("btn waves-effect waves-light btn-primary d-none d-lg-block m-l-15")
+				$("#closeTabBtn").removeClass("btn waves-effect waves-light btn-warning d-none d-lg-block m-l-15")
 				$("#closeTabBtn").addClass("btn waves-effect waves-light btn-danger d-none d-lg-block m-l-15");
 			}
 			
