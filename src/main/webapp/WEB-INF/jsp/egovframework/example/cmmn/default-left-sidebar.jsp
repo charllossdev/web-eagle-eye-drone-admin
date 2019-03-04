@@ -52,8 +52,9 @@
 	
 	// Document Ready
 	$(function() {
-		
 		SideMenuFn.click();
+		
+		SideMenuFn.active("Main");
 	});
 </script>
 
@@ -62,7 +63,7 @@
     
     <div class="d-flex no-block nav-text-box align-items-center">
 		<!-- Logo -->
-		<span><img src="<c:url value='/common/eagleeye-admin/assets/images/eagleeye-white-logo-2.png '/>" class="left-sidebar-logo" alt="elegant admin template" /></span> </a>
+		<span><img src="<c:url value='/common/eagleeye-admin/assets/images/eagleeye-white-logo-2.png'/>" class="left-sidebar-logo" alt="elegant admin template"/></span>
         <a class="nav-lock waves-effect waves-dark ml-auto hidden-md-down" href="javascript:void(0)"><i class="mdi mdi-toggle-switch"></i></a>
         <a class="nav-toggler waves-effect waves-dark ml-auto hidden-sm-up" href="javascript:void(0)"><i class="ti-menu ti-close"></i></a>
     </div>
@@ -83,7 +84,7 @@
 		                    	<c:forEach items="${menuSelectList}" var="subMenuList">
 		                    		<c:if test="${subMenuList.catLv eq 2 && subMenuList.upprCatCd eq mainMenuList.catCd}">
 		                    			<li id="subMenuListLiTag">
-		                    				<a href="#" data-code="<c:out value='${subMenuList.catEngNm}'/>" data-url="<c:out value='${subMenuList.catEngNm}'/>"><c:out value="${subMenuList.catEngNm}"/>
+		                    				<a href="#" data-code="<c:out value='${subMenuList.catEngNm}'/>" data-url="<c:out value='${subMenuList.titleNm}'/>"><c:out value="${subMenuList.catEngNm}"/>
 		                    					<i class="fa fa-circle-o text-success"></i>
 		                    				</a>
 		                    			</li>
