@@ -88,7 +88,8 @@
 			// Init Data Tag 
 			var $dataTab	= $("[data-tab="  + code + "]");
 			var $dataCode	= $("[data-code=" + code + "]");
-						
+			
+			console.log($dataCode);
 			$("#tabList").find(".tab-btn-container").hide();
 			$("#tabList > li").removeClass("custom-active-bold");
 			
@@ -98,6 +99,7 @@
 			// Active Close Btn & Append Bold Texter
 			$dataTab.find(".tab-btn-container").show();
 			$dataTab.addClass("custom-active-bold");
+			pageTitleFn.titleToggle($dataCode);
 			
 			// Show Content
 			$("#" + code + "Content").show();
