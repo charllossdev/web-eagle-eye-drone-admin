@@ -122,8 +122,6 @@
 					that.tabToggle(tabCode);
 					SideMenuFn.active(tabCode);
 				}
-				
-				
 			})
 		},
 		
@@ -162,23 +160,8 @@
 	
 	// Document Ready
 	$(function() {
+		
 		TabMenuFn.tabClick();
-		/*
-		// Header Tabs Click Event
-		$(".navbar-tab").on("click", function() {
-			
-			// Select Choice Tag
-			var $this = $(this);
-			
-			// All Tabs - Remove Highlight
-			$(".nav-tabs li").each(function() {
-			
-				$(this).find("a").removeClass("show active");
-			});
-			
-			$this.find("a").addClass("show active");
-		});
-		*/
 	});
 
 </script>
