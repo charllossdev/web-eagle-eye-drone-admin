@@ -6,29 +6,25 @@
 	var ContentFn = {
 	
 		pageLoad		: function($aTag){
-			
-			var url		= $aTag.data("url");
+		
 			var code	= $aTag.data("code");
 
 			$.ajax({
 				type		: "POST",
 				dataType	: "html",
-				url			: url + ".do",
+				url			: code + ".do",
 				data		: "",
 				success		: function(data){ 
 	
 					//$("#tabCon").append(data);
-					$("#" + code + "Content").append(data);
-							
+					$("#" + code + "Content").append(data);		
 				}
 			});	
-			
 		}
 	}
 	
-
-
 </script>
+
 <div id="tabContentArea">
  <div id="MainContent">       
 	<div class="card-group">
