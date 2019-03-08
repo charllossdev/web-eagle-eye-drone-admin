@@ -40,10 +40,7 @@
 				$("#closeTabBtn").removeClass("btn waves-effect waves-light btn-warning d-none d-lg-block m-l-15")
 				$("#closeTabBtn").addClass("btn waves-effect waves-light btn-danger d-none d-lg-block m-l-15");
 			}
-			
 		}
-	
-	
 	};
 	
 	$(function() {
