@@ -27,8 +27,6 @@
 				// that.active($this);
 				
 				TabMenuFn.tabCheckYn($this);
-				
-				
 				//$this.closest("ul").closest("li").addClass("selected")
 			});
 		},
@@ -46,7 +44,6 @@
 			selectedUl.prev().addClass("active custom-active-bold");
 			selectedUl.parent().addClass("selected");
 			$dataCode.addClass("active custom-active-bold");
-			
 		},
 	};
 	
@@ -80,7 +77,7 @@
 		             		<a class="has-arrow waves-effect waves-dark side-main-menu" href="javascript:void(0)" aria-expanded="false"><i class="<c:out value='${mainMenuList.catIconNm}'/>"></i>
 		             			<span class="hide-menu"><c:out value="${mainMenuList.catEngNm}"/></span>
 		             		</a>
-		                    <ul aria-expanded="false" class="collapse">
+		                    <ul aria-expanded="false" class="collapse custom-side-menu-color">
 		                    	<c:forEach items="${menuSelectList}" var="subMenuList">
 		                    		<c:if test="${subMenuList.catLv eq 2 && subMenuList.upprCatCd eq mainMenuList.catCd}">
 		                    			<li id="subMenuListLiTag">
