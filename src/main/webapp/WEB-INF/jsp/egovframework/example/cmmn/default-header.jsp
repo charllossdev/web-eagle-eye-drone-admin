@@ -136,6 +136,7 @@
 		tabRemove	: function() {
 			
 			var nextIndex;
+			var selectTag;
 			var $this			= $(this);
 			var code 			= $this.closest("li").data("tab");
 			var index			= TabMenuFn.tabArr.indexOf(code);
@@ -152,8 +153,12 @@
 				nextIndex = index;
 			}
 			
-			TabMenuFn.tabToggle(TabMenuFn.tabArr[nextIndex]);
-			TabMenuFn.tabActive(TabMenuFn.tabArr[nextIndex]);
+			selectTag = TabMenuFn.tabArr[nextIndex];
+			
+			TabMenuFn.tabToggle(selectTag);
+			TabMenuFn.tabActive(selectTag);
+			
+			SideMenuFn.active(selectTag);
 		}
 	};
 
